@@ -29,20 +29,23 @@ const (
 // TenantMutation represents an operation that mutates the Tenant nodes in the graph.
 type TenantMutation struct {
 	config
-	op            Op
-	typ           string
-	id            *int
-	parent_id     *int
-	addparent_id  *int
-	name          *string
-	_type         *string
-	status        *string
-	brand_name    *string
-	domain        *string
-	clearedFields map[string]struct{}
-	done          bool
-	oldValue      func(context.Context) (*Tenant, error)
-	predicates    []predicate.Tenant
+	op              Op
+	typ             string
+	id              *int
+	name            *string
+	_type           *tenant.Type
+	status          *string
+	brand_name      *string
+	domain          *string
+	clearedFields   map[string]struct{}
+	parent          *int
+	clearedparent   bool
+	children        map[int]struct{}
+	removedchildren map[int]struct{}
+	clearedchildren bool
+	done            bool
+	oldValue        func(context.Context) (*Tenant, error)
+	predicates      []predicate.Tenant
 }
 
 var _ ent.Mutation = (*TenantMutation)(nil)
@@ -151,13 +154,12 @@ func (m *TenantMutation) IDs(ctx context.Context) ([]int, error) {
 
 // SetParentID sets the "parent_id" field.
 func (m *TenantMutation) SetParentID(i int) {
-	m.parent_id = &i
-	m.addparent_id = nil
+	m.parent = &i
 }
 
 // ParentID returns the value of the "parent_id" field in the mutation.
 func (m *TenantMutation) ParentID() (r int, exists bool) {
-	v := m.parent_id
+	v := m.parent
 	if v == nil {
 		return
 	}
@@ -181,28 +183,22 @@ func (m *TenantMutation) OldParentID(ctx context.Context) (v int, err error) {
 	return oldValue.ParentID, nil
 }
 
-// AddParentID adds i to the "parent_id" field.
-func (m *TenantMutation) AddParentID(i int) {
-	if m.addparent_id != nil {
-		*m.addparent_id += i
-	} else {
-		m.addparent_id = &i
-	}
+// ClearParentID clears the value of the "parent_id" field.
+func (m *TenantMutation) ClearParentID() {
+	m.parent = nil
+	m.clearedFields[tenant.FieldParentID] = struct{}{}
 }
 
-// AddedParentID returns the value that was added to the "parent_id" field in this mutation.
-func (m *TenantMutation) AddedParentID() (r int, exists bool) {
-	v := m.addparent_id
-	if v == nil {
-		return
-	}
-	return *v, true
+// ParentIDCleared returns if the "parent_id" field was cleared in this mutation.
+func (m *TenantMutation) ParentIDCleared() bool {
+	_, ok := m.clearedFields[tenant.FieldParentID]
+	return ok
 }
 
 // ResetParentID resets all changes to the "parent_id" field.
 func (m *TenantMutation) ResetParentID() {
-	m.parent_id = nil
-	m.addparent_id = nil
+	m.parent = nil
+	delete(m.clearedFields, tenant.FieldParentID)
 }
 
 // SetName sets the "name" field.
@@ -242,12 +238,12 @@ func (m *TenantMutation) ResetName() {
 }
 
 // SetType sets the "type" field.
-func (m *TenantMutation) SetType(s string) {
-	m._type = &s
+func (m *TenantMutation) SetType(t tenant.Type) {
+	m._type = &t
 }
 
 // GetType returns the value of the "type" field in the mutation.
-func (m *TenantMutation) GetType() (r string, exists bool) {
+func (m *TenantMutation) GetType() (r tenant.Type, exists bool) {
 	v := m._type
 	if v == nil {
 		return
@@ -258,7 +254,7 @@ func (m *TenantMutation) GetType() (r string, exists bool) {
 // OldType returns the old "type" field's value of the Tenant entity.
 // If the Tenant object wasn't provided to the builder, the object is fetched from the database.
 // An error is returned if the mutation operation is not UpdateOne, or the database query fails.
-func (m *TenantMutation) OldType(ctx context.Context) (v string, err error) {
+func (m *TenantMutation) OldType(ctx context.Context) (v tenant.Type, err error) {
 	if !m.op.Is(OpUpdateOne) {
 		return v, errors.New("OldType is only allowed on UpdateOne operations")
 	}
@@ -411,6 +407,87 @@ func (m *TenantMutation) ResetDomain() {
 	delete(m.clearedFields, tenant.FieldDomain)
 }
 
+// ClearParent clears the "parent" edge to the Tenant entity.
+func (m *TenantMutation) ClearParent() {
+	m.clearedparent = true
+	m.clearedFields[tenant.FieldParentID] = struct{}{}
+}
+
+// ParentCleared reports if the "parent" edge to the Tenant entity was cleared.
+func (m *TenantMutation) ParentCleared() bool {
+	return m.ParentIDCleared() || m.clearedparent
+}
+
+// ParentIDs returns the "parent" edge IDs in the mutation.
+// Note that IDs always returns len(IDs) <= 1 for unique edges, and you should use
+// ParentID instead. It exists only for internal usage by the builders.
+func (m *TenantMutation) ParentIDs() (ids []int) {
+	if id := m.parent; id != nil {
+		ids = append(ids, *id)
+	}
+	return
+}
+
+// ResetParent resets all changes to the "parent" edge.
+func (m *TenantMutation) ResetParent() {
+	m.parent = nil
+	m.clearedparent = false
+}
+
+// AddChildIDs adds the "children" edge to the Tenant entity by ids.
+func (m *TenantMutation) AddChildIDs(ids ...int) {
+	if m.children == nil {
+		m.children = make(map[int]struct{})
+	}
+	for i := range ids {
+		m.children[ids[i]] = struct{}{}
+	}
+}
+
+// ClearChildren clears the "children" edge to the Tenant entity.
+func (m *TenantMutation) ClearChildren() {
+	m.clearedchildren = true
+}
+
+// ChildrenCleared reports if the "children" edge to the Tenant entity was cleared.
+func (m *TenantMutation) ChildrenCleared() bool {
+	return m.clearedchildren
+}
+
+// RemoveChildIDs removes the "children" edge to the Tenant entity by IDs.
+func (m *TenantMutation) RemoveChildIDs(ids ...int) {
+	if m.removedchildren == nil {
+		m.removedchildren = make(map[int]struct{})
+	}
+	for i := range ids {
+		delete(m.children, ids[i])
+		m.removedchildren[ids[i]] = struct{}{}
+	}
+}
+
+// RemovedChildren returns the removed IDs of the "children" edge to the Tenant entity.
+func (m *TenantMutation) RemovedChildrenIDs() (ids []int) {
+	for id := range m.removedchildren {
+		ids = append(ids, id)
+	}
+	return
+}
+
+// ChildrenIDs returns the "children" edge IDs in the mutation.
+func (m *TenantMutation) ChildrenIDs() (ids []int) {
+	for id := range m.children {
+		ids = append(ids, id)
+	}
+	return
+}
+
+// ResetChildren resets all changes to the "children" edge.
+func (m *TenantMutation) ResetChildren() {
+	m.children = nil
+	m.clearedchildren = false
+	m.removedchildren = nil
+}
+
 // Where appends a list predicates to the TenantMutation builder.
 func (m *TenantMutation) Where(ps ...predicate.Tenant) {
 	m.predicates = append(m.predicates, ps...)
@@ -446,7 +523,7 @@ func (m *TenantMutation) Type() string {
 // AddedFields().
 func (m *TenantMutation) Fields() []string {
 	fields := make([]string, 0, 6)
-	if m.parent_id != nil {
+	if m.parent != nil {
 		fields = append(fields, tenant.FieldParentID)
 	}
 	if m.name != nil {
@@ -529,7 +606,7 @@ func (m *TenantMutation) SetField(name string, value ent.Value) error {
 		m.SetName(v)
 		return nil
 	case tenant.FieldType:
-		v, ok := value.(string)
+		v, ok := value.(tenant.Type)
 		if !ok {
 			return fmt.Errorf("unexpected type %T for field %s", value, name)
 		}
@@ -564,9 +641,6 @@ func (m *TenantMutation) SetField(name string, value ent.Value) error {
 // this mutation.
 func (m *TenantMutation) AddedFields() []string {
 	var fields []string
-	if m.addparent_id != nil {
-		fields = append(fields, tenant.FieldParentID)
-	}
 	return fields
 }
 
@@ -575,8 +649,6 @@ func (m *TenantMutation) AddedFields() []string {
 // was not set, or was not defined in the schema.
 func (m *TenantMutation) AddedField(name string) (ent.Value, bool) {
 	switch name {
-	case tenant.FieldParentID:
-		return m.AddedParentID()
 	}
 	return nil, false
 }
@@ -586,13 +658,6 @@ func (m *TenantMutation) AddedField(name string) (ent.Value, bool) {
 // type.
 func (m *TenantMutation) AddField(name string, value ent.Value) error {
 	switch name {
-	case tenant.FieldParentID:
-		v, ok := value.(int)
-		if !ok {
-			return fmt.Errorf("unexpected type %T for field %s", value, name)
-		}
-		m.AddParentID(v)
-		return nil
 	}
 	return fmt.Errorf("unknown Tenant numeric field %s", name)
 }
@@ -601,6 +666,9 @@ func (m *TenantMutation) AddField(name string, value ent.Value) error {
 // mutation.
 func (m *TenantMutation) ClearedFields() []string {
 	var fields []string
+	if m.FieldCleared(tenant.FieldParentID) {
+		fields = append(fields, tenant.FieldParentID)
+	}
 	if m.FieldCleared(tenant.FieldBrandName) {
 		fields = append(fields, tenant.FieldBrandName)
 	}
@@ -621,6 +689,9 @@ func (m *TenantMutation) FieldCleared(name string) bool {
 // error if the field is not defined in the schema.
 func (m *TenantMutation) ClearField(name string) error {
 	switch name {
+	case tenant.FieldParentID:
+		m.ClearParentID()
+		return nil
 	case tenant.FieldBrandName:
 		m.ClearBrandName()
 		return nil
@@ -659,48 +730,102 @@ func (m *TenantMutation) ResetField(name string) error {
 
 // AddedEdges returns all edge names that were set/added in this mutation.
 func (m *TenantMutation) AddedEdges() []string {
-	edges := make([]string, 0, 0)
+	edges := make([]string, 0, 2)
+	if m.parent != nil {
+		edges = append(edges, tenant.EdgeParent)
+	}
+	if m.children != nil {
+		edges = append(edges, tenant.EdgeChildren)
+	}
 	return edges
 }
 
 // AddedIDs returns all IDs (to other nodes) that were added for the given edge
 // name in this mutation.
 func (m *TenantMutation) AddedIDs(name string) []ent.Value {
+	switch name {
+	case tenant.EdgeParent:
+		if id := m.parent; id != nil {
+			return []ent.Value{*id}
+		}
+	case tenant.EdgeChildren:
+		ids := make([]ent.Value, 0, len(m.children))
+		for id := range m.children {
+			ids = append(ids, id)
+		}
+		return ids
+	}
 	return nil
 }
 
 // RemovedEdges returns all edge names that were removed in this mutation.
 func (m *TenantMutation) RemovedEdges() []string {
-	edges := make([]string, 0, 0)
+	edges := make([]string, 0, 2)
+	if m.removedchildren != nil {
+		edges = append(edges, tenant.EdgeChildren)
+	}
 	return edges
 }
 
 // RemovedIDs returns all IDs (to other nodes) that were removed for the edge with
 // the given name in this mutation.
 func (m *TenantMutation) RemovedIDs(name string) []ent.Value {
+	switch name {
+	case tenant.EdgeChildren:
+		ids := make([]ent.Value, 0, len(m.removedchildren))
+		for id := range m.removedchildren {
+			ids = append(ids, id)
+		}
+		return ids
+	}
 	return nil
 }
 
 // ClearedEdges returns all edge names that were cleared in this mutation.
 func (m *TenantMutation) ClearedEdges() []string {
-	edges := make([]string, 0, 0)
+	edges := make([]string, 0, 2)
+	if m.clearedparent {
+		edges = append(edges, tenant.EdgeParent)
+	}
+	if m.clearedchildren {
+		edges = append(edges, tenant.EdgeChildren)
+	}
 	return edges
 }
 
 // EdgeCleared returns a boolean which indicates if the edge with the given name
 // was cleared in this mutation.
 func (m *TenantMutation) EdgeCleared(name string) bool {
+	switch name {
+	case tenant.EdgeParent:
+		return m.clearedparent
+	case tenant.EdgeChildren:
+		return m.clearedchildren
+	}
 	return false
 }
 
 // ClearEdge clears the value of the edge with the given name. It returns an error
 // if that edge is not defined in the schema.
 func (m *TenantMutation) ClearEdge(name string) error {
+	switch name {
+	case tenant.EdgeParent:
+		m.ClearParent()
+		return nil
+	}
 	return fmt.Errorf("unknown Tenant unique edge %s", name)
 }
 
 // ResetEdge resets all changes to the edge with the given name in this mutation.
 // It returns an error if the edge is not defined in the schema.
 func (m *TenantMutation) ResetEdge(name string) error {
+	switch name {
+	case tenant.EdgeParent:
+		m.ResetParent()
+		return nil
+	case tenant.EdgeChildren:
+		m.ResetChildren()
+		return nil
+	}
 	return fmt.Errorf("unknown Tenant edge %s", name)
 }

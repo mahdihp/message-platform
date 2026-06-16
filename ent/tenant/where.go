@@ -6,6 +6,7 @@ import (
 	"message-platform/ent/predicate"
 
 	"entgo.io/ent/dialect/sql"
+	"entgo.io/ent/dialect/sql/sqlgraph"
 )
 
 // ID filters vertices based on their ID field.
@@ -63,11 +64,6 @@ func Name(v string) predicate.Tenant {
 	return predicate.Tenant(sql.FieldEQ(FieldName, v))
 }
 
-// Type applies equality check predicate on the "type" field. It's identical to TypeEQ.
-func Type(v string) predicate.Tenant {
-	return predicate.Tenant(sql.FieldEQ(FieldType, v))
-}
-
 // Status applies equality check predicate on the "status" field. It's identical to StatusEQ.
 func Status(v string) predicate.Tenant {
 	return predicate.Tenant(sql.FieldEQ(FieldStatus, v))
@@ -103,24 +99,14 @@ func ParentIDNotIn(vs ...int) predicate.Tenant {
 	return predicate.Tenant(sql.FieldNotIn(FieldParentID, vs...))
 }
 
-// ParentIDGT applies the GT predicate on the "parent_id" field.
-func ParentIDGT(v int) predicate.Tenant {
-	return predicate.Tenant(sql.FieldGT(FieldParentID, v))
+// ParentIDIsNil applies the IsNil predicate on the "parent_id" field.
+func ParentIDIsNil() predicate.Tenant {
+	return predicate.Tenant(sql.FieldIsNull(FieldParentID))
 }
 
-// ParentIDGTE applies the GTE predicate on the "parent_id" field.
-func ParentIDGTE(v int) predicate.Tenant {
-	return predicate.Tenant(sql.FieldGTE(FieldParentID, v))
-}
-
-// ParentIDLT applies the LT predicate on the "parent_id" field.
-func ParentIDLT(v int) predicate.Tenant {
-	return predicate.Tenant(sql.FieldLT(FieldParentID, v))
-}
-
-// ParentIDLTE applies the LTE predicate on the "parent_id" field.
-func ParentIDLTE(v int) predicate.Tenant {
-	return predicate.Tenant(sql.FieldLTE(FieldParentID, v))
+// ParentIDNotNil applies the NotNil predicate on the "parent_id" field.
+func ParentIDNotNil() predicate.Tenant {
+	return predicate.Tenant(sql.FieldNotNull(FieldParentID))
 }
 
 // NameEQ applies the EQ predicate on the "name" field.
@@ -189,68 +175,23 @@ func NameContainsFold(v string) predicate.Tenant {
 }
 
 // TypeEQ applies the EQ predicate on the "type" field.
-func TypeEQ(v string) predicate.Tenant {
+func TypeEQ(v Type) predicate.Tenant {
 	return predicate.Tenant(sql.FieldEQ(FieldType, v))
 }
 
 // TypeNEQ applies the NEQ predicate on the "type" field.
-func TypeNEQ(v string) predicate.Tenant {
+func TypeNEQ(v Type) predicate.Tenant {
 	return predicate.Tenant(sql.FieldNEQ(FieldType, v))
 }
 
 // TypeIn applies the In predicate on the "type" field.
-func TypeIn(vs ...string) predicate.Tenant {
+func TypeIn(vs ...Type) predicate.Tenant {
 	return predicate.Tenant(sql.FieldIn(FieldType, vs...))
 }
 
 // TypeNotIn applies the NotIn predicate on the "type" field.
-func TypeNotIn(vs ...string) predicate.Tenant {
+func TypeNotIn(vs ...Type) predicate.Tenant {
 	return predicate.Tenant(sql.FieldNotIn(FieldType, vs...))
-}
-
-// TypeGT applies the GT predicate on the "type" field.
-func TypeGT(v string) predicate.Tenant {
-	return predicate.Tenant(sql.FieldGT(FieldType, v))
-}
-
-// TypeGTE applies the GTE predicate on the "type" field.
-func TypeGTE(v string) predicate.Tenant {
-	return predicate.Tenant(sql.FieldGTE(FieldType, v))
-}
-
-// TypeLT applies the LT predicate on the "type" field.
-func TypeLT(v string) predicate.Tenant {
-	return predicate.Tenant(sql.FieldLT(FieldType, v))
-}
-
-// TypeLTE applies the LTE predicate on the "type" field.
-func TypeLTE(v string) predicate.Tenant {
-	return predicate.Tenant(sql.FieldLTE(FieldType, v))
-}
-
-// TypeContains applies the Contains predicate on the "type" field.
-func TypeContains(v string) predicate.Tenant {
-	return predicate.Tenant(sql.FieldContains(FieldType, v))
-}
-
-// TypeHasPrefix applies the HasPrefix predicate on the "type" field.
-func TypeHasPrefix(v string) predicate.Tenant {
-	return predicate.Tenant(sql.FieldHasPrefix(FieldType, v))
-}
-
-// TypeHasSuffix applies the HasSuffix predicate on the "type" field.
-func TypeHasSuffix(v string) predicate.Tenant {
-	return predicate.Tenant(sql.FieldHasSuffix(FieldType, v))
-}
-
-// TypeEqualFold applies the EqualFold predicate on the "type" field.
-func TypeEqualFold(v string) predicate.Tenant {
-	return predicate.Tenant(sql.FieldEqualFold(FieldType, v))
-}
-
-// TypeContainsFold applies the ContainsFold predicate on the "type" field.
-func TypeContainsFold(v string) predicate.Tenant {
-	return predicate.Tenant(sql.FieldContainsFold(FieldType, v))
 }
 
 // StatusEQ applies the EQ predicate on the "status" field.
@@ -466,6 +407,52 @@ func DomainEqualFold(v string) predicate.Tenant {
 // DomainContainsFold applies the ContainsFold predicate on the "domain" field.
 func DomainContainsFold(v string) predicate.Tenant {
 	return predicate.Tenant(sql.FieldContainsFold(FieldDomain, v))
+}
+
+// HasParent applies the HasEdge predicate on the "parent" edge.
+func HasParent() predicate.Tenant {
+	return predicate.Tenant(func(s *sql.Selector) {
+		step := sqlgraph.NewStep(
+			sqlgraph.From(Table, FieldID),
+			sqlgraph.Edge(sqlgraph.M2O, true, ParentTable, ParentColumn),
+		)
+		sqlgraph.HasNeighbors(s, step)
+	})
+}
+
+// HasParentWith applies the HasEdge predicate on the "parent" edge with a given conditions (other predicates).
+func HasParentWith(preds ...predicate.Tenant) predicate.Tenant {
+	return predicate.Tenant(func(s *sql.Selector) {
+		step := newParentStep()
+		sqlgraph.HasNeighborsWith(s, step, func(s *sql.Selector) {
+			for _, p := range preds {
+				p(s)
+			}
+		})
+	})
+}
+
+// HasChildren applies the HasEdge predicate on the "children" edge.
+func HasChildren() predicate.Tenant {
+	return predicate.Tenant(func(s *sql.Selector) {
+		step := sqlgraph.NewStep(
+			sqlgraph.From(Table, FieldID),
+			sqlgraph.Edge(sqlgraph.O2M, false, ChildrenTable, ChildrenColumn),
+		)
+		sqlgraph.HasNeighbors(s, step)
+	})
+}
+
+// HasChildrenWith applies the HasEdge predicate on the "children" edge with a given conditions (other predicates).
+func HasChildrenWith(preds ...predicate.Tenant) predicate.Tenant {
+	return predicate.Tenant(func(s *sql.Selector) {
+		step := newChildrenStep()
+		sqlgraph.HasNeighborsWith(s, step, func(s *sql.Selector) {
+			for _, p := range preds {
+				p(s)
+			}
+		})
+	})
 }
 
 // And groups predicates with the AND operator between them.

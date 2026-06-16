@@ -25,6 +25,14 @@ func (_c *TenantCreate) SetParentID(v int) *TenantCreate {
 	return _c
 }
 
+// SetNillableParentID sets the "parent_id" field if the given value is not nil.
+func (_c *TenantCreate) SetNillableParentID(v *int) *TenantCreate {
+	if v != nil {
+		_c.SetParentID(*v)
+	}
+	return _c
+}
+
 // SetName sets the "name" field.
 func (_c *TenantCreate) SetName(v string) *TenantCreate {
 	_c.mutation.SetName(v)
@@ -32,8 +40,16 @@ func (_c *TenantCreate) SetName(v string) *TenantCreate {
 }
 
 // SetType sets the "type" field.
-func (_c *TenantCreate) SetType(v string) *TenantCreate {
+func (_c *TenantCreate) SetType(v tenant.Type) *TenantCreate {
 	_c.mutation.SetType(v)
+	return _c
+}
+
+// SetNillableType sets the "type" field if the given value is not nil.
+func (_c *TenantCreate) SetNillableType(v *tenant.Type) *TenantCreate {
+	if v != nil {
+		_c.SetType(*v)
+	}
 	return _c
 }
 
@@ -77,6 +93,26 @@ func (_c *TenantCreate) SetID(v int) *TenantCreate {
 	return _c
 }
 
+// SetParent sets the "parent" edge to the Tenant entity.
+func (_c *TenantCreate) SetParent(v *Tenant) *TenantCreate {
+	return _c.SetParentID(v.ID)
+}
+
+// AddChildIDs adds the "children" edge to the Tenant entity by IDs.
+func (_c *TenantCreate) AddChildIDs(ids ...int) *TenantCreate {
+	_c.mutation.AddChildIDs(ids...)
+	return _c
+}
+
+// AddChildren adds the "children" edges to the Tenant entity.
+func (_c *TenantCreate) AddChildren(v ...*Tenant) *TenantCreate {
+	ids := make([]int, len(v))
+	for i := range v {
+		ids[i] = v[i].ID
+	}
+	return _c.AddChildIDs(ids...)
+}
+
 // Mutation returns the TenantMutation object of the builder.
 func (_c *TenantCreate) Mutation() *TenantMutation {
 	return _c.mutation
@@ -84,6 +120,7 @@ func (_c *TenantCreate) Mutation() *TenantMutation {
 
 // Save creates the Tenant in the database.
 func (_c *TenantCreate) Save(ctx context.Context) (*Tenant, error) {
+	_c.defaults()
 	return withHooks(ctx, _c.sqlSave, _c.mutation, _c.hooks)
 }
 
@@ -109,16 +146,26 @@ func (_c *TenantCreate) ExecX(ctx context.Context) {
 	}
 }
 
+// defaults sets the default values of the builder before save.
+func (_c *TenantCreate) defaults() {
+	if _, ok := _c.mutation.GetType(); !ok {
+		v := tenant.DefaultType
+		_c.mutation.SetType(v)
+	}
+}
+
 // check runs all checks and user-defined validators on the builder.
 func (_c *TenantCreate) check() error {
-	if _, ok := _c.mutation.ParentID(); !ok {
-		return &ValidationError{Name: "parent_id", err: errors.New(`ent: missing required field "Tenant.parent_id"`)}
-	}
 	if _, ok := _c.mutation.Name(); !ok {
 		return &ValidationError{Name: "name", err: errors.New(`ent: missing required field "Tenant.name"`)}
 	}
 	if _, ok := _c.mutation.GetType(); !ok {
 		return &ValidationError{Name: "type", err: errors.New(`ent: missing required field "Tenant.type"`)}
+	}
+	if v, ok := _c.mutation.GetType(); ok {
+		if err := tenant.TypeValidator(v); err != nil {
+			return &ValidationError{Name: "type", err: fmt.Errorf(`ent: validator failed for field "Tenant.type": %w`, err)}
+		}
 	}
 	if _, ok := _c.mutation.Status(); !ok {
 		return &ValidationError{Name: "status", err: errors.New(`ent: missing required field "Tenant.status"`)}
@@ -155,16 +202,12 @@ func (_c *TenantCreate) createSpec() (*Tenant, *sqlgraph.CreateSpec) {
 		_node.ID = id
 		_spec.ID.Value = id
 	}
-	if value, ok := _c.mutation.ParentID(); ok {
-		_spec.SetField(tenant.FieldParentID, field.TypeInt, value)
-		_node.ParentID = value
-	}
 	if value, ok := _c.mutation.Name(); ok {
 		_spec.SetField(tenant.FieldName, field.TypeString, value)
 		_node.Name = value
 	}
 	if value, ok := _c.mutation.GetType(); ok {
-		_spec.SetField(tenant.FieldType, field.TypeString, value)
+		_spec.SetField(tenant.FieldType, field.TypeEnum, value)
 		_node.Type = value
 	}
 	if value, ok := _c.mutation.Status(); ok {
@@ -178,6 +221,39 @@ func (_c *TenantCreate) createSpec() (*Tenant, *sqlgraph.CreateSpec) {
 	if value, ok := _c.mutation.Domain(); ok {
 		_spec.SetField(tenant.FieldDomain, field.TypeString, value)
 		_node.Domain = value
+	}
+	if nodes := _c.mutation.ParentIDs(); len(nodes) > 0 {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.M2O,
+			Inverse: true,
+			Table:   tenant.ParentTable,
+			Columns: []string{tenant.ParentColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(tenant.FieldID, field.TypeInt),
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_node.ParentID = nodes[0]
+		_spec.Edges = append(_spec.Edges, edge)
+	}
+	if nodes := _c.mutation.ChildrenIDs(); len(nodes) > 0 {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: false,
+			Table:   tenant.ChildrenTable,
+			Columns: []string{tenant.ChildrenColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(tenant.FieldID, field.TypeInt),
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges = append(_spec.Edges, edge)
 	}
 	return _node, _spec
 }
@@ -200,6 +276,7 @@ func (_c *TenantCreateBulk) Save(ctx context.Context) ([]*Tenant, error) {
 	for i := range _c.builders {
 		func(i int, root context.Context) {
 			builder := _c.builders[i]
+			builder.defaults()
 			var mut Mutator = MutateFunc(func(ctx context.Context, m Mutation) (Value, error) {
 				mutation, ok := m.(*TenantMutation)
 				if !ok {

@@ -29,7 +29,6 @@ func (_u *TenantUpdate) Where(ps ...predicate.Tenant) *TenantUpdate {
 
 // SetParentID sets the "parent_id" field.
 func (_u *TenantUpdate) SetParentID(v int) *TenantUpdate {
-	_u.mutation.ResetParentID()
 	_u.mutation.SetParentID(v)
 	return _u
 }
@@ -42,9 +41,9 @@ func (_u *TenantUpdate) SetNillableParentID(v *int) *TenantUpdate {
 	return _u
 }
 
-// AddParentID adds value to the "parent_id" field.
-func (_u *TenantUpdate) AddParentID(v int) *TenantUpdate {
-	_u.mutation.AddParentID(v)
+// ClearParentID clears the value of the "parent_id" field.
+func (_u *TenantUpdate) ClearParentID() *TenantUpdate {
+	_u.mutation.ClearParentID()
 	return _u
 }
 
@@ -63,13 +62,13 @@ func (_u *TenantUpdate) SetNillableName(v *string) *TenantUpdate {
 }
 
 // SetType sets the "type" field.
-func (_u *TenantUpdate) SetType(v string) *TenantUpdate {
+func (_u *TenantUpdate) SetType(v tenant.Type) *TenantUpdate {
 	_u.mutation.SetType(v)
 	return _u
 }
 
 // SetNillableType sets the "type" field if the given value is not nil.
-func (_u *TenantUpdate) SetNillableType(v *string) *TenantUpdate {
+func (_u *TenantUpdate) SetNillableType(v *tenant.Type) *TenantUpdate {
 	if v != nil {
 		_u.SetType(*v)
 	}
@@ -130,9 +129,56 @@ func (_u *TenantUpdate) ClearDomain() *TenantUpdate {
 	return _u
 }
 
+// SetParent sets the "parent" edge to the Tenant entity.
+func (_u *TenantUpdate) SetParent(v *Tenant) *TenantUpdate {
+	return _u.SetParentID(v.ID)
+}
+
+// AddChildIDs adds the "children" edge to the Tenant entity by IDs.
+func (_u *TenantUpdate) AddChildIDs(ids ...int) *TenantUpdate {
+	_u.mutation.AddChildIDs(ids...)
+	return _u
+}
+
+// AddChildren adds the "children" edges to the Tenant entity.
+func (_u *TenantUpdate) AddChildren(v ...*Tenant) *TenantUpdate {
+	ids := make([]int, len(v))
+	for i := range v {
+		ids[i] = v[i].ID
+	}
+	return _u.AddChildIDs(ids...)
+}
+
 // Mutation returns the TenantMutation object of the builder.
 func (_u *TenantUpdate) Mutation() *TenantMutation {
 	return _u.mutation
+}
+
+// ClearParent clears the "parent" edge to the Tenant entity.
+func (_u *TenantUpdate) ClearParent() *TenantUpdate {
+	_u.mutation.ClearParent()
+	return _u
+}
+
+// ClearChildren clears all "children" edges to the Tenant entity.
+func (_u *TenantUpdate) ClearChildren() *TenantUpdate {
+	_u.mutation.ClearChildren()
+	return _u
+}
+
+// RemoveChildIDs removes the "children" edge to Tenant entities by IDs.
+func (_u *TenantUpdate) RemoveChildIDs(ids ...int) *TenantUpdate {
+	_u.mutation.RemoveChildIDs(ids...)
+	return _u
+}
+
+// RemoveChildren removes "children" edges to Tenant entities.
+func (_u *TenantUpdate) RemoveChildren(v ...*Tenant) *TenantUpdate {
+	ids := make([]int, len(v))
+	for i := range v {
+		ids[i] = v[i].ID
+	}
+	return _u.RemoveChildIDs(ids...)
 }
 
 // Save executes the query and returns the number of nodes affected by the update operation.
@@ -162,7 +208,20 @@ func (_u *TenantUpdate) ExecX(ctx context.Context) {
 	}
 }
 
+// check runs all checks and user-defined validators on the builder.
+func (_u *TenantUpdate) check() error {
+	if v, ok := _u.mutation.GetType(); ok {
+		if err := tenant.TypeValidator(v); err != nil {
+			return &ValidationError{Name: "type", err: fmt.Errorf(`ent: validator failed for field "Tenant.type": %w`, err)}
+		}
+	}
+	return nil
+}
+
 func (_u *TenantUpdate) sqlSave(ctx context.Context) (_node int, err error) {
+	if err := _u.check(); err != nil {
+		return _node, err
+	}
 	_spec := sqlgraph.NewUpdateSpec(tenant.Table, tenant.Columns, sqlgraph.NewFieldSpec(tenant.FieldID, field.TypeInt))
 	if ps := _u.mutation.predicates; len(ps) > 0 {
 		_spec.Predicate = func(selector *sql.Selector) {
@@ -171,17 +230,11 @@ func (_u *TenantUpdate) sqlSave(ctx context.Context) (_node int, err error) {
 			}
 		}
 	}
-	if value, ok := _u.mutation.ParentID(); ok {
-		_spec.SetField(tenant.FieldParentID, field.TypeInt, value)
-	}
-	if value, ok := _u.mutation.AddedParentID(); ok {
-		_spec.AddField(tenant.FieldParentID, field.TypeInt, value)
-	}
 	if value, ok := _u.mutation.Name(); ok {
 		_spec.SetField(tenant.FieldName, field.TypeString, value)
 	}
 	if value, ok := _u.mutation.GetType(); ok {
-		_spec.SetField(tenant.FieldType, field.TypeString, value)
+		_spec.SetField(tenant.FieldType, field.TypeEnum, value)
 	}
 	if value, ok := _u.mutation.Status(); ok {
 		_spec.SetField(tenant.FieldStatus, field.TypeString, value)
@@ -197,6 +250,80 @@ func (_u *TenantUpdate) sqlSave(ctx context.Context) (_node int, err error) {
 	}
 	if _u.mutation.DomainCleared() {
 		_spec.ClearField(tenant.FieldDomain, field.TypeString)
+	}
+	if _u.mutation.ParentCleared() {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.M2O,
+			Inverse: true,
+			Table:   tenant.ParentTable,
+			Columns: []string{tenant.ParentColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(tenant.FieldID, field.TypeInt),
+			},
+		}
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
+	if nodes := _u.mutation.ParentIDs(); len(nodes) > 0 {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.M2O,
+			Inverse: true,
+			Table:   tenant.ParentTable,
+			Columns: []string{tenant.ParentColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(tenant.FieldID, field.TypeInt),
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges.Add = append(_spec.Edges.Add, edge)
+	}
+	if _u.mutation.ChildrenCleared() {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: false,
+			Table:   tenant.ChildrenTable,
+			Columns: []string{tenant.ChildrenColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(tenant.FieldID, field.TypeInt),
+			},
+		}
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
+	if nodes := _u.mutation.RemovedChildrenIDs(); len(nodes) > 0 && !_u.mutation.ChildrenCleared() {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: false,
+			Table:   tenant.ChildrenTable,
+			Columns: []string{tenant.ChildrenColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(tenant.FieldID, field.TypeInt),
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
+	if nodes := _u.mutation.ChildrenIDs(); len(nodes) > 0 {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: false,
+			Table:   tenant.ChildrenTable,
+			Columns: []string{tenant.ChildrenColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(tenant.FieldID, field.TypeInt),
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges.Add = append(_spec.Edges.Add, edge)
 	}
 	if _node, err = sqlgraph.UpdateNodes(ctx, _u.driver, _spec); err != nil {
 		if _, ok := err.(*sqlgraph.NotFoundError); ok {
@@ -220,7 +347,6 @@ type TenantUpdateOne struct {
 
 // SetParentID sets the "parent_id" field.
 func (_u *TenantUpdateOne) SetParentID(v int) *TenantUpdateOne {
-	_u.mutation.ResetParentID()
 	_u.mutation.SetParentID(v)
 	return _u
 }
@@ -233,9 +359,9 @@ func (_u *TenantUpdateOne) SetNillableParentID(v *int) *TenantUpdateOne {
 	return _u
 }
 
-// AddParentID adds value to the "parent_id" field.
-func (_u *TenantUpdateOne) AddParentID(v int) *TenantUpdateOne {
-	_u.mutation.AddParentID(v)
+// ClearParentID clears the value of the "parent_id" field.
+func (_u *TenantUpdateOne) ClearParentID() *TenantUpdateOne {
+	_u.mutation.ClearParentID()
 	return _u
 }
 
@@ -254,13 +380,13 @@ func (_u *TenantUpdateOne) SetNillableName(v *string) *TenantUpdateOne {
 }
 
 // SetType sets the "type" field.
-func (_u *TenantUpdateOne) SetType(v string) *TenantUpdateOne {
+func (_u *TenantUpdateOne) SetType(v tenant.Type) *TenantUpdateOne {
 	_u.mutation.SetType(v)
 	return _u
 }
 
 // SetNillableType sets the "type" field if the given value is not nil.
-func (_u *TenantUpdateOne) SetNillableType(v *string) *TenantUpdateOne {
+func (_u *TenantUpdateOne) SetNillableType(v *tenant.Type) *TenantUpdateOne {
 	if v != nil {
 		_u.SetType(*v)
 	}
@@ -321,9 +447,56 @@ func (_u *TenantUpdateOne) ClearDomain() *TenantUpdateOne {
 	return _u
 }
 
+// SetParent sets the "parent" edge to the Tenant entity.
+func (_u *TenantUpdateOne) SetParent(v *Tenant) *TenantUpdateOne {
+	return _u.SetParentID(v.ID)
+}
+
+// AddChildIDs adds the "children" edge to the Tenant entity by IDs.
+func (_u *TenantUpdateOne) AddChildIDs(ids ...int) *TenantUpdateOne {
+	_u.mutation.AddChildIDs(ids...)
+	return _u
+}
+
+// AddChildren adds the "children" edges to the Tenant entity.
+func (_u *TenantUpdateOne) AddChildren(v ...*Tenant) *TenantUpdateOne {
+	ids := make([]int, len(v))
+	for i := range v {
+		ids[i] = v[i].ID
+	}
+	return _u.AddChildIDs(ids...)
+}
+
 // Mutation returns the TenantMutation object of the builder.
 func (_u *TenantUpdateOne) Mutation() *TenantMutation {
 	return _u.mutation
+}
+
+// ClearParent clears the "parent" edge to the Tenant entity.
+func (_u *TenantUpdateOne) ClearParent() *TenantUpdateOne {
+	_u.mutation.ClearParent()
+	return _u
+}
+
+// ClearChildren clears all "children" edges to the Tenant entity.
+func (_u *TenantUpdateOne) ClearChildren() *TenantUpdateOne {
+	_u.mutation.ClearChildren()
+	return _u
+}
+
+// RemoveChildIDs removes the "children" edge to Tenant entities by IDs.
+func (_u *TenantUpdateOne) RemoveChildIDs(ids ...int) *TenantUpdateOne {
+	_u.mutation.RemoveChildIDs(ids...)
+	return _u
+}
+
+// RemoveChildren removes "children" edges to Tenant entities.
+func (_u *TenantUpdateOne) RemoveChildren(v ...*Tenant) *TenantUpdateOne {
+	ids := make([]int, len(v))
+	for i := range v {
+		ids[i] = v[i].ID
+	}
+	return _u.RemoveChildIDs(ids...)
 }
 
 // Where appends a list predicates to the TenantUpdate builder.
@@ -366,7 +539,20 @@ func (_u *TenantUpdateOne) ExecX(ctx context.Context) {
 	}
 }
 
+// check runs all checks and user-defined validators on the builder.
+func (_u *TenantUpdateOne) check() error {
+	if v, ok := _u.mutation.GetType(); ok {
+		if err := tenant.TypeValidator(v); err != nil {
+			return &ValidationError{Name: "type", err: fmt.Errorf(`ent: validator failed for field "Tenant.type": %w`, err)}
+		}
+	}
+	return nil
+}
+
 func (_u *TenantUpdateOne) sqlSave(ctx context.Context) (_node *Tenant, err error) {
+	if err := _u.check(); err != nil {
+		return _node, err
+	}
 	_spec := sqlgraph.NewUpdateSpec(tenant.Table, tenant.Columns, sqlgraph.NewFieldSpec(tenant.FieldID, field.TypeInt))
 	id, ok := _u.mutation.ID()
 	if !ok {
@@ -392,17 +578,11 @@ func (_u *TenantUpdateOne) sqlSave(ctx context.Context) (_node *Tenant, err erro
 			}
 		}
 	}
-	if value, ok := _u.mutation.ParentID(); ok {
-		_spec.SetField(tenant.FieldParentID, field.TypeInt, value)
-	}
-	if value, ok := _u.mutation.AddedParentID(); ok {
-		_spec.AddField(tenant.FieldParentID, field.TypeInt, value)
-	}
 	if value, ok := _u.mutation.Name(); ok {
 		_spec.SetField(tenant.FieldName, field.TypeString, value)
 	}
 	if value, ok := _u.mutation.GetType(); ok {
-		_spec.SetField(tenant.FieldType, field.TypeString, value)
+		_spec.SetField(tenant.FieldType, field.TypeEnum, value)
 	}
 	if value, ok := _u.mutation.Status(); ok {
 		_spec.SetField(tenant.FieldStatus, field.TypeString, value)
@@ -418,6 +598,80 @@ func (_u *TenantUpdateOne) sqlSave(ctx context.Context) (_node *Tenant, err erro
 	}
 	if _u.mutation.DomainCleared() {
 		_spec.ClearField(tenant.FieldDomain, field.TypeString)
+	}
+	if _u.mutation.ParentCleared() {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.M2O,
+			Inverse: true,
+			Table:   tenant.ParentTable,
+			Columns: []string{tenant.ParentColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(tenant.FieldID, field.TypeInt),
+			},
+		}
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
+	if nodes := _u.mutation.ParentIDs(); len(nodes) > 0 {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.M2O,
+			Inverse: true,
+			Table:   tenant.ParentTable,
+			Columns: []string{tenant.ParentColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(tenant.FieldID, field.TypeInt),
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges.Add = append(_spec.Edges.Add, edge)
+	}
+	if _u.mutation.ChildrenCleared() {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: false,
+			Table:   tenant.ChildrenTable,
+			Columns: []string{tenant.ChildrenColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(tenant.FieldID, field.TypeInt),
+			},
+		}
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
+	if nodes := _u.mutation.RemovedChildrenIDs(); len(nodes) > 0 && !_u.mutation.ChildrenCleared() {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: false,
+			Table:   tenant.ChildrenTable,
+			Columns: []string{tenant.ChildrenColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(tenant.FieldID, field.TypeInt),
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
+	if nodes := _u.mutation.ChildrenIDs(); len(nodes) > 0 {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: false,
+			Table:   tenant.ChildrenTable,
+			Columns: []string{tenant.ChildrenColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(tenant.FieldID, field.TypeInt),
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges.Add = append(_spec.Edges.Add, edge)
 	}
 	_node = &Tenant{config: _u.config}
 	_spec.Assign = _node.assignValues

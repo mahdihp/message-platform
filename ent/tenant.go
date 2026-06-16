@@ -21,14 +21,48 @@ type Tenant struct {
 	// Name holds the value of the "name" field.
 	Name string `json:"name,omitempty"`
 	// Type holds the value of the "type" field.
-	Type string `json:"type,omitempty"`
+	Type tenant.Type `json:"type,omitempty"`
 	// Status holds the value of the "status" field.
 	Status string `json:"status,omitempty"`
 	// BrandName holds the value of the "brand_name" field.
 	BrandName string `json:"brand_name,omitempty"`
 	// Domain holds the value of the "domain" field.
-	Domain       string `json:"domain,omitempty"`
+	Domain string `json:"domain,omitempty"`
+	// Edges holds the relations/edges for other nodes in the graph.
+	// The values are being populated by the TenantQuery when eager-loading is set.
+	Edges        TenantEdges `json:"edges"`
 	selectValues sql.SelectValues
+}
+
+// TenantEdges holds the relations/edges for other nodes in the graph.
+type TenantEdges struct {
+	// Parent holds the value of the parent edge.
+	Parent *Tenant `json:"parent,omitempty"`
+	// Children holds the value of the children edge.
+	Children []*Tenant `json:"children,omitempty"`
+	// loadedTypes holds the information for reporting if a
+	// type was loaded (or requested) in eager-loading or not.
+	loadedTypes [2]bool
+}
+
+// ParentOrErr returns the Parent value or an error if the edge
+// was not loaded in eager-loading, or loaded but was not found.
+func (e TenantEdges) ParentOrErr() (*Tenant, error) {
+	if e.Parent != nil {
+		return e.Parent, nil
+	} else if e.loadedTypes[0] {
+		return nil, &NotFoundError{label: tenant.Label}
+	}
+	return nil, &NotLoadedError{edge: "parent"}
+}
+
+// ChildrenOrErr returns the Children value or an error if the edge
+// was not loaded in eager-loading.
+func (e TenantEdges) ChildrenOrErr() ([]*Tenant, error) {
+	if e.loadedTypes[1] {
+		return e.Children, nil
+	}
+	return nil, &NotLoadedError{edge: "children"}
 }
 
 // scanValues returns the types for scanning values from sql.Rows.
@@ -77,7 +111,7 @@ func (_m *Tenant) assignValues(columns []string, values []any) error {
 			if value, ok := values[i].(*sql.NullString); !ok {
 				return fmt.Errorf("unexpected type %T for field type", values[i])
 			} else if value.Valid {
-				_m.Type = value.String
+				_m.Type = tenant.Type(value.String)
 			}
 		case tenant.FieldStatus:
 			if value, ok := values[i].(*sql.NullString); !ok {
@@ -110,6 +144,16 @@ func (_m *Tenant) Value(name string) (ent.Value, error) {
 	return _m.selectValues.Get(name)
 }
 
+// QueryParent queries the "parent" edge of the Tenant entity.
+func (_m *Tenant) QueryParent() *TenantQuery {
+	return NewTenantClient(_m.config).QueryParent(_m)
+}
+
+// QueryChildren queries the "children" edge of the Tenant entity.
+func (_m *Tenant) QueryChildren() *TenantQuery {
+	return NewTenantClient(_m.config).QueryChildren(_m)
+}
+
 // Update returns a builder for updating this Tenant.
 // Note that you need to call Tenant.Unwrap() before calling this method if this Tenant
 // was returned from a transaction, and the transaction was committed or rolled back.
@@ -140,7 +184,7 @@ func (_m *Tenant) String() string {
 	builder.WriteString(_m.Name)
 	builder.WriteString(", ")
 	builder.WriteString("type=")
-	builder.WriteString(_m.Type)
+	builder.WriteString(fmt.Sprintf("%v", _m.Type))
 	builder.WriteString(", ")
 	builder.WriteString("status=")
 	builder.WriteString(_m.Status)

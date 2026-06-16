@@ -11,18 +11,26 @@ var (
 	// TenantsColumns holds the columns for the "tenants" table.
 	TenantsColumns = []*schema.Column{
 		{Name: "id", Type: field.TypeInt, Increment: true},
-		{Name: "parent_id", Type: field.TypeInt},
 		{Name: "name", Type: field.TypeString},
-		{Name: "type", Type: field.TypeString},
+		{Name: "type", Type: field.TypeEnum, Enums: []string{"platform"}, Default: "platform"},
 		{Name: "status", Type: field.TypeString},
 		{Name: "brand_name", Type: field.TypeString, Unique: true, Nullable: true},
 		{Name: "domain", Type: field.TypeString, Unique: true, Nullable: true},
+		{Name: "parent_id", Type: field.TypeInt, Nullable: true},
 	}
 	// TenantsTable holds the schema information for the "tenants" table.
 	TenantsTable = &schema.Table{
 		Name:       "tenants",
 		Columns:    TenantsColumns,
 		PrimaryKey: []*schema.Column{TenantsColumns[0]},
+		ForeignKeys: []*schema.ForeignKey{
+			{
+				Symbol:     "tenants_tenants_children",
+				Columns:    []*schema.Column{TenantsColumns[6]},
+				RefColumns: []*schema.Column{TenantsColumns[0]},
+				OnDelete:   schema.SetNull,
+			},
+		},
 	}
 	// Tables holds all the tables in the schema.
 	Tables = []*schema.Table{
@@ -31,4 +39,5 @@ var (
 )
 
 func init() {
+	TenantsTable.ForeignKeys[0].RefTable = TenantsTable
 }

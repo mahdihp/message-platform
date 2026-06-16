@@ -1,7 +1,10 @@
 package schema
 
 import (
+	"message-platform/configs"
+
 	"entgo.io/ent"
+	"entgo.io/ent/schema/edge"
 	"entgo.io/ent/schema/field"
 )
 
@@ -14,9 +17,9 @@ type Tenant struct {
 func (Tenant) Fields() []ent.Field {
 	return []ent.Field{
 		field.Int("id"),
-		field.Int("parent_id"),
+		field.Int("parent_id").Optional(),
 		field.String("name"),
-		field.String("type"),
+		field.Enum("type").Values(string(configs.Platform)).Default(string(configs.Platform)),
 		field.String("status"),
 		field.String("brand_name").Optional().Unique(),
 		field.String("domain").Optional().Unique(),
@@ -25,5 +28,8 @@ func (Tenant) Fields() []ent.Field {
 
 // Edges of the Tenant.
 func (Tenant) Edges() []ent.Edge {
-	return nil
+	return []ent.Edge{
+		edge.To("children", Tenant.Type).
+			From("parent").Unique().Field("parent_id"),
+	}
 }
