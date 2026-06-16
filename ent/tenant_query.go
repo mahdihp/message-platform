@@ -258,6 +258,18 @@ func (_q *TenantQuery) Clone() *TenantQuery {
 
 // GroupBy is used to group vertices by one or more fields/columns.
 // It is often used with aggregate functions, like: count, max, mean, min, sum.
+//
+// Example:
+//
+//	var v []struct {
+//		ParentID int `json:"parent_id,omitempty"`
+//		Count int `json:"count,omitempty"`
+//	}
+//
+//	client.Tenant.Query().
+//		GroupBy(tenant.FieldParentID).
+//		Aggregate(ent.Count()).
+//		Scan(ctx, &v)
 func (_q *TenantQuery) GroupBy(field string, fields ...string) *TenantGroupBy {
 	_q.ctx.Fields = append([]string{field}, fields...)
 	grbuild := &TenantGroupBy{build: _q}
@@ -269,6 +281,16 @@ func (_q *TenantQuery) GroupBy(field string, fields ...string) *TenantGroupBy {
 
 // Select allows the selection one or more fields/columns for the given query,
 // instead of selecting all fields in the entity.
+//
+// Example:
+//
+//	var v []struct {
+//		ParentID int `json:"parent_id,omitempty"`
+//	}
+//
+//	client.Tenant.Query().
+//		Select(tenant.FieldParentID).
+//		Scan(ctx, &v)
 func (_q *TenantQuery) Select(fields ...string) *TenantSelect {
 	_q.ctx.Fields = append(_q.ctx.Fields, fields...)
 	sbuild := &TenantSelect{TenantQuery: _q}

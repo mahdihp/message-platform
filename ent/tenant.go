@@ -3,6 +3,7 @@
 package ent
 
 import (
+	"encoding/json"
 	"fmt"
 	"message-platform/ent/tenant"
 	"strings"
@@ -13,9 +14,23 @@ import (
 
 // Tenant is the model entity for the Tenant schema.
 type Tenant struct {
-	config
+	config `json:"-"`
 	// ID of the ent.
-	ID           int `json:"id,omitempty"`
+	ID int `json:"id,omitempty"`
+	// ParentID holds the value of the "parent_id" field.
+	ParentID int `json:"parent_id,omitempty"`
+	// Name holds the value of the "name" field.
+	Name []string `json:"name,omitempty"`
+	// Type holds the value of the "type" field.
+	Type []string `json:"type,omitempty"`
+	// Status holds the value of the "status" field.
+	Status []string `json:"status,omitempty"`
+	// BrandName holds the value of the "brand_name" field.
+	BrandName []string `json:"brand_name,omitempty"`
+	// Domain holds the value of the "domain" field.
+	Domain []string `json:"domain,omitempty"`
+	// Domain3 holds the value of the "domain3" field.
+	Domain3      []string `json:"domain3,omitempty"`
 	selectValues sql.SelectValues
 }
 
@@ -24,7 +39,9 @@ func (*Tenant) scanValues(columns []string) ([]any, error) {
 	values := make([]any, len(columns))
 	for i := range columns {
 		switch columns[i] {
-		case tenant.FieldID:
+		case tenant.FieldName, tenant.FieldType, tenant.FieldStatus, tenant.FieldBrandName, tenant.FieldDomain, tenant.FieldDomain3:
+			values[i] = new([]byte)
+		case tenant.FieldID, tenant.FieldParentID:
 			values[i] = new(sql.NullInt64)
 		default:
 			values[i] = new(sql.UnknownType)
@@ -47,6 +64,60 @@ func (_m *Tenant) assignValues(columns []string, values []any) error {
 				return fmt.Errorf("unexpected type %T for field id", value)
 			}
 			_m.ID = int(value.Int64)
+		case tenant.FieldParentID:
+			if value, ok := values[i].(*sql.NullInt64); !ok {
+				return fmt.Errorf("unexpected type %T for field parent_id", values[i])
+			} else if value.Valid {
+				_m.ParentID = int(value.Int64)
+			}
+		case tenant.FieldName:
+			if value, ok := values[i].(*[]byte); !ok {
+				return fmt.Errorf("unexpected type %T for field name", values[i])
+			} else if value != nil && len(*value) > 0 {
+				if err := json.Unmarshal(*value, &_m.Name); err != nil {
+					return fmt.Errorf("unmarshal field name: %w", err)
+				}
+			}
+		case tenant.FieldType:
+			if value, ok := values[i].(*[]byte); !ok {
+				return fmt.Errorf("unexpected type %T for field type", values[i])
+			} else if value != nil && len(*value) > 0 {
+				if err := json.Unmarshal(*value, &_m.Type); err != nil {
+					return fmt.Errorf("unmarshal field type: %w", err)
+				}
+			}
+		case tenant.FieldStatus:
+			if value, ok := values[i].(*[]byte); !ok {
+				return fmt.Errorf("unexpected type %T for field status", values[i])
+			} else if value != nil && len(*value) > 0 {
+				if err := json.Unmarshal(*value, &_m.Status); err != nil {
+					return fmt.Errorf("unmarshal field status: %w", err)
+				}
+			}
+		case tenant.FieldBrandName:
+			if value, ok := values[i].(*[]byte); !ok {
+				return fmt.Errorf("unexpected type %T for field brand_name", values[i])
+			} else if value != nil && len(*value) > 0 {
+				if err := json.Unmarshal(*value, &_m.BrandName); err != nil {
+					return fmt.Errorf("unmarshal field brand_name: %w", err)
+				}
+			}
+		case tenant.FieldDomain:
+			if value, ok := values[i].(*[]byte); !ok {
+				return fmt.Errorf("unexpected type %T for field domain", values[i])
+			} else if value != nil && len(*value) > 0 {
+				if err := json.Unmarshal(*value, &_m.Domain); err != nil {
+					return fmt.Errorf("unmarshal field domain: %w", err)
+				}
+			}
+		case tenant.FieldDomain3:
+			if value, ok := values[i].(*[]byte); !ok {
+				return fmt.Errorf("unexpected type %T for field domain3", values[i])
+			} else if value != nil && len(*value) > 0 {
+				if err := json.Unmarshal(*value, &_m.Domain3); err != nil {
+					return fmt.Errorf("unmarshal field domain3: %w", err)
+				}
+			}
 		default:
 			_m.selectValues.Set(columns[i], values[i])
 		}
@@ -82,7 +153,27 @@ func (_m *Tenant) Unwrap() *Tenant {
 func (_m *Tenant) String() string {
 	var builder strings.Builder
 	builder.WriteString("Tenant(")
-	builder.WriteString(fmt.Sprintf("id=%v", _m.ID))
+	builder.WriteString(fmt.Sprintf("id=%v, ", _m.ID))
+	builder.WriteString("parent_id=")
+	builder.WriteString(fmt.Sprintf("%v", _m.ParentID))
+	builder.WriteString(", ")
+	builder.WriteString("name=")
+	builder.WriteString(fmt.Sprintf("%v", _m.Name))
+	builder.WriteString(", ")
+	builder.WriteString("type=")
+	builder.WriteString(fmt.Sprintf("%v", _m.Type))
+	builder.WriteString(", ")
+	builder.WriteString("status=")
+	builder.WriteString(fmt.Sprintf("%v", _m.Status))
+	builder.WriteString(", ")
+	builder.WriteString("brand_name=")
+	builder.WriteString(fmt.Sprintf("%v", _m.BrandName))
+	builder.WriteString(", ")
+	builder.WriteString("domain=")
+	builder.WriteString(fmt.Sprintf("%v", _m.Domain))
+	builder.WriteString(", ")
+	builder.WriteString("domain3=")
+	builder.WriteString(fmt.Sprintf("%v", _m.Domain3))
 	builder.WriteByte(')')
 	return builder.String()
 }

@@ -11,6 +11,20 @@ const (
 	Label = "tenant"
 	// FieldID holds the string denoting the id field in the database.
 	FieldID = "id"
+	// FieldParentID holds the string denoting the parent_id field in the database.
+	FieldParentID = "parent_id"
+	// FieldName holds the string denoting the name field in the database.
+	FieldName = "name"
+	// FieldType holds the string denoting the type field in the database.
+	FieldType = "type"
+	// FieldStatus holds the string denoting the status field in the database.
+	FieldStatus = "status"
+	// FieldBrandName holds the string denoting the brand_name field in the database.
+	FieldBrandName = "brand_name"
+	// FieldDomain holds the string denoting the domain field in the database.
+	FieldDomain = "domain"
+	// FieldDomain3 holds the string denoting the domain3 field in the database.
+	FieldDomain3 = "domain3"
 	// Table holds the table name of the tenant in the database.
 	Table = "tenants"
 )
@@ -18,6 +32,13 @@ const (
 // Columns holds all SQL columns for tenant fields.
 var Columns = []string{
 	FieldID,
+	FieldParentID,
+	FieldName,
+	FieldType,
+	FieldStatus,
+	FieldBrandName,
+	FieldDomain,
+	FieldDomain3,
 }
 
 // ValidColumn reports if the column name is valid (part of the table columns).
@@ -36,4 +57,9 @@ type OrderOption func(*sql.Selector)
 // ByID orders the results by the id field.
 func ByID(opts ...sql.OrderTermOption) OrderOption {
 	return sql.OrderByField(FieldID, opts...).ToFunc()
+}
+
+// ByParentID orders the results by the parent_id field.
+func ByParentID(opts ...sql.OrderTermOption) OrderOption {
+	return sql.OrderByField(FieldParentID, opts...).ToFunc()
 }

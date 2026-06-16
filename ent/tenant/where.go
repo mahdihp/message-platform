@@ -53,6 +53,51 @@ func IDLTE(id int) predicate.Tenant {
 	return predicate.Tenant(sql.FieldLTE(FieldID, id))
 }
 
+// ParentID applies equality check predicate on the "parent_id" field. It's identical to ParentIDEQ.
+func ParentID(v int) predicate.Tenant {
+	return predicate.Tenant(sql.FieldEQ(FieldParentID, v))
+}
+
+// ParentIDEQ applies the EQ predicate on the "parent_id" field.
+func ParentIDEQ(v int) predicate.Tenant {
+	return predicate.Tenant(sql.FieldEQ(FieldParentID, v))
+}
+
+// ParentIDNEQ applies the NEQ predicate on the "parent_id" field.
+func ParentIDNEQ(v int) predicate.Tenant {
+	return predicate.Tenant(sql.FieldNEQ(FieldParentID, v))
+}
+
+// ParentIDIn applies the In predicate on the "parent_id" field.
+func ParentIDIn(vs ...int) predicate.Tenant {
+	return predicate.Tenant(sql.FieldIn(FieldParentID, vs...))
+}
+
+// ParentIDNotIn applies the NotIn predicate on the "parent_id" field.
+func ParentIDNotIn(vs ...int) predicate.Tenant {
+	return predicate.Tenant(sql.FieldNotIn(FieldParentID, vs...))
+}
+
+// ParentIDGT applies the GT predicate on the "parent_id" field.
+func ParentIDGT(v int) predicate.Tenant {
+	return predicate.Tenant(sql.FieldGT(FieldParentID, v))
+}
+
+// ParentIDGTE applies the GTE predicate on the "parent_id" field.
+func ParentIDGTE(v int) predicate.Tenant {
+	return predicate.Tenant(sql.FieldGTE(FieldParentID, v))
+}
+
+// ParentIDLT applies the LT predicate on the "parent_id" field.
+func ParentIDLT(v int) predicate.Tenant {
+	return predicate.Tenant(sql.FieldLT(FieldParentID, v))
+}
+
+// ParentIDLTE applies the LTE predicate on the "parent_id" field.
+func ParentIDLTE(v int) predicate.Tenant {
+	return predicate.Tenant(sql.FieldLTE(FieldParentID, v))
+}
+
 // And groups predicates with the AND operator between them.
 func And(predicates ...predicate.Tenant) predicate.Tenant {
 	return predicate.Tenant(sql.AndPredicates(predicates...))

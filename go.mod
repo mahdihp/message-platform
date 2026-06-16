@@ -2,7 +2,10 @@ module message-platform
 
 go 1.26.0
 
-require entgo.io/ent v0.14.6
+require (
+	entgo.io/ent v0.14.6
+	github.com/lib/pq v1.12.3
+)
 
 require (
 	ariga.io/atlas v0.36.2-0.20250730182955-2c6300d0a3e1 // indirect

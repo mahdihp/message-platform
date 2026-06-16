@@ -4,6 +4,7 @@ package ent
 
 import (
 	"context"
+	"errors"
 	"fmt"
 	"message-platform/ent/tenant"
 
@@ -16,6 +17,54 @@ type TenantCreate struct {
 	config
 	mutation *TenantMutation
 	hooks    []Hook
+}
+
+// SetParentID sets the "parent_id" field.
+func (_c *TenantCreate) SetParentID(v int) *TenantCreate {
+	_c.mutation.SetParentID(v)
+	return _c
+}
+
+// SetName sets the "name" field.
+func (_c *TenantCreate) SetName(v []string) *TenantCreate {
+	_c.mutation.SetName(v)
+	return _c
+}
+
+// SetType sets the "type" field.
+func (_c *TenantCreate) SetType(v []string) *TenantCreate {
+	_c.mutation.SetType(v)
+	return _c
+}
+
+// SetStatus sets the "status" field.
+func (_c *TenantCreate) SetStatus(v []string) *TenantCreate {
+	_c.mutation.SetStatus(v)
+	return _c
+}
+
+// SetBrandName sets the "brand_name" field.
+func (_c *TenantCreate) SetBrandName(v []string) *TenantCreate {
+	_c.mutation.SetBrandName(v)
+	return _c
+}
+
+// SetDomain sets the "domain" field.
+func (_c *TenantCreate) SetDomain(v []string) *TenantCreate {
+	_c.mutation.SetDomain(v)
+	return _c
+}
+
+// SetDomain3 sets the "domain3" field.
+func (_c *TenantCreate) SetDomain3(v []string) *TenantCreate {
+	_c.mutation.SetDomain3(v)
+	return _c
+}
+
+// SetID sets the "id" field.
+func (_c *TenantCreate) SetID(v int) *TenantCreate {
+	_c.mutation.SetID(v)
+	return _c
 }
 
 // Mutation returns the TenantMutation object of the builder.
@@ -52,6 +101,27 @@ func (_c *TenantCreate) ExecX(ctx context.Context) {
 
 // check runs all checks and user-defined validators on the builder.
 func (_c *TenantCreate) check() error {
+	if _, ok := _c.mutation.ParentID(); !ok {
+		return &ValidationError{Name: "parent_id", err: errors.New(`ent: missing required field "Tenant.parent_id"`)}
+	}
+	if _, ok := _c.mutation.Name(); !ok {
+		return &ValidationError{Name: "name", err: errors.New(`ent: missing required field "Tenant.name"`)}
+	}
+	if _, ok := _c.mutation.GetType(); !ok {
+		return &ValidationError{Name: "type", err: errors.New(`ent: missing required field "Tenant.type"`)}
+	}
+	if _, ok := _c.mutation.Status(); !ok {
+		return &ValidationError{Name: "status", err: errors.New(`ent: missing required field "Tenant.status"`)}
+	}
+	if _, ok := _c.mutation.BrandName(); !ok {
+		return &ValidationError{Name: "brand_name", err: errors.New(`ent: missing required field "Tenant.brand_name"`)}
+	}
+	if _, ok := _c.mutation.Domain(); !ok {
+		return &ValidationError{Name: "domain", err: errors.New(`ent: missing required field "Tenant.domain"`)}
+	}
+	if _, ok := _c.mutation.Domain3(); !ok {
+		return &ValidationError{Name: "domain3", err: errors.New(`ent: missing required field "Tenant.domain3"`)}
+	}
 	return nil
 }
 
@@ -66,8 +136,10 @@ func (_c *TenantCreate) sqlSave(ctx context.Context) (*Tenant, error) {
 		}
 		return nil, err
 	}
-	id := _spec.ID.Value.(int64)
-	_node.ID = int(id)
+	if _spec.ID.Value != _node.ID {
+		id := _spec.ID.Value.(int64)
+		_node.ID = int(id)
+	}
 	_c.mutation.id = &_node.ID
 	_c.mutation.done = true
 	return _node, nil
@@ -78,6 +150,38 @@ func (_c *TenantCreate) createSpec() (*Tenant, *sqlgraph.CreateSpec) {
 		_node = &Tenant{config: _c.config}
 		_spec = sqlgraph.NewCreateSpec(tenant.Table, sqlgraph.NewFieldSpec(tenant.FieldID, field.TypeInt))
 	)
+	if id, ok := _c.mutation.ID(); ok {
+		_node.ID = id
+		_spec.ID.Value = id
+	}
+	if value, ok := _c.mutation.ParentID(); ok {
+		_spec.SetField(tenant.FieldParentID, field.TypeInt, value)
+		_node.ParentID = value
+	}
+	if value, ok := _c.mutation.Name(); ok {
+		_spec.SetField(tenant.FieldName, field.TypeJSON, value)
+		_node.Name = value
+	}
+	if value, ok := _c.mutation.GetType(); ok {
+		_spec.SetField(tenant.FieldType, field.TypeJSON, value)
+		_node.Type = value
+	}
+	if value, ok := _c.mutation.Status(); ok {
+		_spec.SetField(tenant.FieldStatus, field.TypeJSON, value)
+		_node.Status = value
+	}
+	if value, ok := _c.mutation.BrandName(); ok {
+		_spec.SetField(tenant.FieldBrandName, field.TypeJSON, value)
+		_node.BrandName = value
+	}
+	if value, ok := _c.mutation.Domain(); ok {
+		_spec.SetField(tenant.FieldDomain, field.TypeJSON, value)
+		_node.Domain = value
+	}
+	if value, ok := _c.mutation.Domain3(); ok {
+		_spec.SetField(tenant.FieldDomain3, field.TypeJSON, value)
+		_node.Domain3 = value
+	}
 	return _node, _spec
 }
 
@@ -125,7 +229,7 @@ func (_c *TenantCreateBulk) Save(ctx context.Context) ([]*Tenant, error) {
 					return nil, err
 				}
 				mutation.id = &nodes[i].ID
-				if specs[i].ID.Value != nil {
+				if specs[i].ID.Value != nil && nodes[i].ID == 0 {
 					id := specs[i].ID.Value.(int64)
 					nodes[i].ID = int(id)
 				}

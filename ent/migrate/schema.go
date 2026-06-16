@@ -11,6 +11,13 @@ var (
 	// TenantsColumns holds the columns for the "tenants" table.
 	TenantsColumns = []*schema.Column{
 		{Name: "id", Type: field.TypeInt, Increment: true},
+		{Name: "parent_id", Type: field.TypeInt},
+		{Name: "name", Type: field.TypeJSON},
+		{Name: "type", Type: field.TypeJSON},
+		{Name: "status", Type: field.TypeJSON},
+		{Name: "brand_name", Type: field.TypeJSON},
+		{Name: "domain", Type: field.TypeJSON},
+		{Name: "domain3", Type: field.TypeJSON},
 	}
 	// TenantsTable holds the schema information for the "tenants" table.
 	TenantsTable = &schema.Table{
