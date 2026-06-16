@@ -23,8 +23,6 @@ const (
 	FieldBrandName = "brand_name"
 	// FieldDomain holds the string denoting the domain field in the database.
 	FieldDomain = "domain"
-	// FieldDomain3 holds the string denoting the domain3 field in the database.
-	FieldDomain3 = "domain3"
 	// Table holds the table name of the tenant in the database.
 	Table = "tenants"
 )
@@ -38,7 +36,6 @@ var Columns = []string{
 	FieldStatus,
 	FieldBrandName,
 	FieldDomain,
-	FieldDomain3,
 }
 
 // ValidColumn reports if the column name is valid (part of the table columns).
@@ -62,4 +59,29 @@ func ByID(opts ...sql.OrderTermOption) OrderOption {
 // ByParentID orders the results by the parent_id field.
 func ByParentID(opts ...sql.OrderTermOption) OrderOption {
 	return sql.OrderByField(FieldParentID, opts...).ToFunc()
+}
+
+// ByName orders the results by the name field.
+func ByName(opts ...sql.OrderTermOption) OrderOption {
+	return sql.OrderByField(FieldName, opts...).ToFunc()
+}
+
+// ByType orders the results by the type field.
+func ByType(opts ...sql.OrderTermOption) OrderOption {
+	return sql.OrderByField(FieldType, opts...).ToFunc()
+}
+
+// ByStatus orders the results by the status field.
+func ByStatus(opts ...sql.OrderTermOption) OrderOption {
+	return sql.OrderByField(FieldStatus, opts...).ToFunc()
+}
+
+// ByBrandName orders the results by the brand_name field.
+func ByBrandName(opts ...sql.OrderTermOption) OrderOption {
+	return sql.OrderByField(FieldBrandName, opts...).ToFunc()
+}
+
+// ByDomain orders the results by the domain field.
+func ByDomain(opts ...sql.OrderTermOption) OrderOption {
+	return sql.OrderByField(FieldDomain, opts...).ToFunc()
 }

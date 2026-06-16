@@ -15,12 +15,11 @@ func (Tenant) Fields() []ent.Field {
 	return []ent.Field{
 		field.Int("id"),
 		field.Int("parent_id"),
-		field.Strings("name"),
-		field.Strings("type"),
-		field.Strings("status"),
-		field.Strings("brand_name"),
-		field.Strings("domain"),
-		field.Strings("domain3"),
+		field.String("name"),
+		field.String("type"),
+		field.String("status"),
+		field.String("brand_name").Optional().Unique(),
+		field.String("domain").Optional().Unique(),
 	}
 }
 

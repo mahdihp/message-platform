@@ -29,27 +29,20 @@ const (
 // TenantMutation represents an operation that mutates the Tenant nodes in the graph.
 type TenantMutation struct {
 	config
-	op               Op
-	typ              string
-	id               *int
-	parent_id        *int
-	addparent_id     *int
-	name             *[]string
-	appendname       []string
-	_type            *[]string
-	append_type      []string
-	status           *[]string
-	appendstatus     []string
-	brand_name       *[]string
-	appendbrand_name []string
-	domain           *[]string
-	appenddomain     []string
-	domain3          *[]string
-	appenddomain3    []string
-	clearedFields    map[string]struct{}
-	done             bool
-	oldValue         func(context.Context) (*Tenant, error)
-	predicates       []predicate.Tenant
+	op            Op
+	typ           string
+	id            *int
+	parent_id     *int
+	addparent_id  *int
+	name          *string
+	_type         *string
+	status        *string
+	brand_name    *string
+	domain        *string
+	clearedFields map[string]struct{}
+	done          bool
+	oldValue      func(context.Context) (*Tenant, error)
+	predicates    []predicate.Tenant
 }
 
 var _ ent.Mutation = (*TenantMutation)(nil)
@@ -213,13 +206,12 @@ func (m *TenantMutation) ResetParentID() {
 }
 
 // SetName sets the "name" field.
-func (m *TenantMutation) SetName(s []string) {
+func (m *TenantMutation) SetName(s string) {
 	m.name = &s
-	m.appendname = nil
 }
 
 // Name returns the value of the "name" field in the mutation.
-func (m *TenantMutation) Name() (r []string, exists bool) {
+func (m *TenantMutation) Name() (r string, exists bool) {
 	v := m.name
 	if v == nil {
 		return
@@ -230,7 +222,7 @@ func (m *TenantMutation) Name() (r []string, exists bool) {
 // OldName returns the old "name" field's value of the Tenant entity.
 // If the Tenant object wasn't provided to the builder, the object is fetched from the database.
 // An error is returned if the mutation operation is not UpdateOne, or the database query fails.
-func (m *TenantMutation) OldName(ctx context.Context) (v []string, err error) {
+func (m *TenantMutation) OldName(ctx context.Context) (v string, err error) {
 	if !m.op.Is(OpUpdateOne) {
 		return v, errors.New("OldName is only allowed on UpdateOne operations")
 	}
@@ -244,33 +236,18 @@ func (m *TenantMutation) OldName(ctx context.Context) (v []string, err error) {
 	return oldValue.Name, nil
 }
 
-// AppendName adds s to the "name" field.
-func (m *TenantMutation) AppendName(s []string) {
-	m.appendname = append(m.appendname, s...)
-}
-
-// AppendedName returns the list of values that were appended to the "name" field in this mutation.
-func (m *TenantMutation) AppendedName() ([]string, bool) {
-	if len(m.appendname) == 0 {
-		return nil, false
-	}
-	return m.appendname, true
-}
-
 // ResetName resets all changes to the "name" field.
 func (m *TenantMutation) ResetName() {
 	m.name = nil
-	m.appendname = nil
 }
 
 // SetType sets the "type" field.
-func (m *TenantMutation) SetType(s []string) {
+func (m *TenantMutation) SetType(s string) {
 	m._type = &s
-	m.append_type = nil
 }
 
 // GetType returns the value of the "type" field in the mutation.
-func (m *TenantMutation) GetType() (r []string, exists bool) {
+func (m *TenantMutation) GetType() (r string, exists bool) {
 	v := m._type
 	if v == nil {
 		return
@@ -281,7 +258,7 @@ func (m *TenantMutation) GetType() (r []string, exists bool) {
 // OldType returns the old "type" field's value of the Tenant entity.
 // If the Tenant object wasn't provided to the builder, the object is fetched from the database.
 // An error is returned if the mutation operation is not UpdateOne, or the database query fails.
-func (m *TenantMutation) OldType(ctx context.Context) (v []string, err error) {
+func (m *TenantMutation) OldType(ctx context.Context) (v string, err error) {
 	if !m.op.Is(OpUpdateOne) {
 		return v, errors.New("OldType is only allowed on UpdateOne operations")
 	}
@@ -295,33 +272,18 @@ func (m *TenantMutation) OldType(ctx context.Context) (v []string, err error) {
 	return oldValue.Type, nil
 }
 
-// AppendType adds s to the "type" field.
-func (m *TenantMutation) AppendType(s []string) {
-	m.append_type = append(m.append_type, s...)
-}
-
-// AppendedType returns the list of values that were appended to the "type" field in this mutation.
-func (m *TenantMutation) AppendedType() ([]string, bool) {
-	if len(m.append_type) == 0 {
-		return nil, false
-	}
-	return m.append_type, true
-}
-
 // ResetType resets all changes to the "type" field.
 func (m *TenantMutation) ResetType() {
 	m._type = nil
-	m.append_type = nil
 }
 
 // SetStatus sets the "status" field.
-func (m *TenantMutation) SetStatus(s []string) {
+func (m *TenantMutation) SetStatus(s string) {
 	m.status = &s
-	m.appendstatus = nil
 }
 
 // Status returns the value of the "status" field in the mutation.
-func (m *TenantMutation) Status() (r []string, exists bool) {
+func (m *TenantMutation) Status() (r string, exists bool) {
 	v := m.status
 	if v == nil {
 		return
@@ -332,7 +294,7 @@ func (m *TenantMutation) Status() (r []string, exists bool) {
 // OldStatus returns the old "status" field's value of the Tenant entity.
 // If the Tenant object wasn't provided to the builder, the object is fetched from the database.
 // An error is returned if the mutation operation is not UpdateOne, or the database query fails.
-func (m *TenantMutation) OldStatus(ctx context.Context) (v []string, err error) {
+func (m *TenantMutation) OldStatus(ctx context.Context) (v string, err error) {
 	if !m.op.Is(OpUpdateOne) {
 		return v, errors.New("OldStatus is only allowed on UpdateOne operations")
 	}
@@ -346,33 +308,18 @@ func (m *TenantMutation) OldStatus(ctx context.Context) (v []string, err error) 
 	return oldValue.Status, nil
 }
 
-// AppendStatus adds s to the "status" field.
-func (m *TenantMutation) AppendStatus(s []string) {
-	m.appendstatus = append(m.appendstatus, s...)
-}
-
-// AppendedStatus returns the list of values that were appended to the "status" field in this mutation.
-func (m *TenantMutation) AppendedStatus() ([]string, bool) {
-	if len(m.appendstatus) == 0 {
-		return nil, false
-	}
-	return m.appendstatus, true
-}
-
 // ResetStatus resets all changes to the "status" field.
 func (m *TenantMutation) ResetStatus() {
 	m.status = nil
-	m.appendstatus = nil
 }
 
 // SetBrandName sets the "brand_name" field.
-func (m *TenantMutation) SetBrandName(s []string) {
+func (m *TenantMutation) SetBrandName(s string) {
 	m.brand_name = &s
-	m.appendbrand_name = nil
 }
 
 // BrandName returns the value of the "brand_name" field in the mutation.
-func (m *TenantMutation) BrandName() (r []string, exists bool) {
+func (m *TenantMutation) BrandName() (r string, exists bool) {
 	v := m.brand_name
 	if v == nil {
 		return
@@ -383,7 +330,7 @@ func (m *TenantMutation) BrandName() (r []string, exists bool) {
 // OldBrandName returns the old "brand_name" field's value of the Tenant entity.
 // If the Tenant object wasn't provided to the builder, the object is fetched from the database.
 // An error is returned if the mutation operation is not UpdateOne, or the database query fails.
-func (m *TenantMutation) OldBrandName(ctx context.Context) (v []string, err error) {
+func (m *TenantMutation) OldBrandName(ctx context.Context) (v string, err error) {
 	if !m.op.Is(OpUpdateOne) {
 		return v, errors.New("OldBrandName is only allowed on UpdateOne operations")
 	}
@@ -397,33 +344,31 @@ func (m *TenantMutation) OldBrandName(ctx context.Context) (v []string, err erro
 	return oldValue.BrandName, nil
 }
 
-// AppendBrandName adds s to the "brand_name" field.
-func (m *TenantMutation) AppendBrandName(s []string) {
-	m.appendbrand_name = append(m.appendbrand_name, s...)
+// ClearBrandName clears the value of the "brand_name" field.
+func (m *TenantMutation) ClearBrandName() {
+	m.brand_name = nil
+	m.clearedFields[tenant.FieldBrandName] = struct{}{}
 }
 
-// AppendedBrandName returns the list of values that were appended to the "brand_name" field in this mutation.
-func (m *TenantMutation) AppendedBrandName() ([]string, bool) {
-	if len(m.appendbrand_name) == 0 {
-		return nil, false
-	}
-	return m.appendbrand_name, true
+// BrandNameCleared returns if the "brand_name" field was cleared in this mutation.
+func (m *TenantMutation) BrandNameCleared() bool {
+	_, ok := m.clearedFields[tenant.FieldBrandName]
+	return ok
 }
 
 // ResetBrandName resets all changes to the "brand_name" field.
 func (m *TenantMutation) ResetBrandName() {
 	m.brand_name = nil
-	m.appendbrand_name = nil
+	delete(m.clearedFields, tenant.FieldBrandName)
 }
 
 // SetDomain sets the "domain" field.
-func (m *TenantMutation) SetDomain(s []string) {
+func (m *TenantMutation) SetDomain(s string) {
 	m.domain = &s
-	m.appenddomain = nil
 }
 
 // Domain returns the value of the "domain" field in the mutation.
-func (m *TenantMutation) Domain() (r []string, exists bool) {
+func (m *TenantMutation) Domain() (r string, exists bool) {
 	v := m.domain
 	if v == nil {
 		return
@@ -434,7 +379,7 @@ func (m *TenantMutation) Domain() (r []string, exists bool) {
 // OldDomain returns the old "domain" field's value of the Tenant entity.
 // If the Tenant object wasn't provided to the builder, the object is fetched from the database.
 // An error is returned if the mutation operation is not UpdateOne, or the database query fails.
-func (m *TenantMutation) OldDomain(ctx context.Context) (v []string, err error) {
+func (m *TenantMutation) OldDomain(ctx context.Context) (v string, err error) {
 	if !m.op.Is(OpUpdateOne) {
 		return v, errors.New("OldDomain is only allowed on UpdateOne operations")
 	}
@@ -448,74 +393,22 @@ func (m *TenantMutation) OldDomain(ctx context.Context) (v []string, err error) 
 	return oldValue.Domain, nil
 }
 
-// AppendDomain adds s to the "domain" field.
-func (m *TenantMutation) AppendDomain(s []string) {
-	m.appenddomain = append(m.appenddomain, s...)
+// ClearDomain clears the value of the "domain" field.
+func (m *TenantMutation) ClearDomain() {
+	m.domain = nil
+	m.clearedFields[tenant.FieldDomain] = struct{}{}
 }
 
-// AppendedDomain returns the list of values that were appended to the "domain" field in this mutation.
-func (m *TenantMutation) AppendedDomain() ([]string, bool) {
-	if len(m.appenddomain) == 0 {
-		return nil, false
-	}
-	return m.appenddomain, true
+// DomainCleared returns if the "domain" field was cleared in this mutation.
+func (m *TenantMutation) DomainCleared() bool {
+	_, ok := m.clearedFields[tenant.FieldDomain]
+	return ok
 }
 
 // ResetDomain resets all changes to the "domain" field.
 func (m *TenantMutation) ResetDomain() {
 	m.domain = nil
-	m.appenddomain = nil
-}
-
-// SetDomain3 sets the "domain3" field.
-func (m *TenantMutation) SetDomain3(s []string) {
-	m.domain3 = &s
-	m.appenddomain3 = nil
-}
-
-// Domain3 returns the value of the "domain3" field in the mutation.
-func (m *TenantMutation) Domain3() (r []string, exists bool) {
-	v := m.domain3
-	if v == nil {
-		return
-	}
-	return *v, true
-}
-
-// OldDomain3 returns the old "domain3" field's value of the Tenant entity.
-// If the Tenant object wasn't provided to the builder, the object is fetched from the database.
-// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
-func (m *TenantMutation) OldDomain3(ctx context.Context) (v []string, err error) {
-	if !m.op.Is(OpUpdateOne) {
-		return v, errors.New("OldDomain3 is only allowed on UpdateOne operations")
-	}
-	if m.id == nil || m.oldValue == nil {
-		return v, errors.New("OldDomain3 requires an ID field in the mutation")
-	}
-	oldValue, err := m.oldValue(ctx)
-	if err != nil {
-		return v, fmt.Errorf("querying old value for OldDomain3: %w", err)
-	}
-	return oldValue.Domain3, nil
-}
-
-// AppendDomain3 adds s to the "domain3" field.
-func (m *TenantMutation) AppendDomain3(s []string) {
-	m.appenddomain3 = append(m.appenddomain3, s...)
-}
-
-// AppendedDomain3 returns the list of values that were appended to the "domain3" field in this mutation.
-func (m *TenantMutation) AppendedDomain3() ([]string, bool) {
-	if len(m.appenddomain3) == 0 {
-		return nil, false
-	}
-	return m.appenddomain3, true
-}
-
-// ResetDomain3 resets all changes to the "domain3" field.
-func (m *TenantMutation) ResetDomain3() {
-	m.domain3 = nil
-	m.appenddomain3 = nil
+	delete(m.clearedFields, tenant.FieldDomain)
 }
 
 // Where appends a list predicates to the TenantMutation builder.
@@ -552,7 +445,7 @@ func (m *TenantMutation) Type() string {
 // order to get all numeric fields that were incremented/decremented, call
 // AddedFields().
 func (m *TenantMutation) Fields() []string {
-	fields := make([]string, 0, 7)
+	fields := make([]string, 0, 6)
 	if m.parent_id != nil {
 		fields = append(fields, tenant.FieldParentID)
 	}
@@ -570,9 +463,6 @@ func (m *TenantMutation) Fields() []string {
 	}
 	if m.domain != nil {
 		fields = append(fields, tenant.FieldDomain)
-	}
-	if m.domain3 != nil {
-		fields = append(fields, tenant.FieldDomain3)
 	}
 	return fields
 }
@@ -594,8 +484,6 @@ func (m *TenantMutation) Field(name string) (ent.Value, bool) {
 		return m.BrandName()
 	case tenant.FieldDomain:
 		return m.Domain()
-	case tenant.FieldDomain3:
-		return m.Domain3()
 	}
 	return nil, false
 }
@@ -617,8 +505,6 @@ func (m *TenantMutation) OldField(ctx context.Context, name string) (ent.Value, 
 		return m.OldBrandName(ctx)
 	case tenant.FieldDomain:
 		return m.OldDomain(ctx)
-	case tenant.FieldDomain3:
-		return m.OldDomain3(ctx)
 	}
 	return nil, fmt.Errorf("unknown Tenant field %s", name)
 }
@@ -636,46 +522,39 @@ func (m *TenantMutation) SetField(name string, value ent.Value) error {
 		m.SetParentID(v)
 		return nil
 	case tenant.FieldName:
-		v, ok := value.([]string)
+		v, ok := value.(string)
 		if !ok {
 			return fmt.Errorf("unexpected type %T for field %s", value, name)
 		}
 		m.SetName(v)
 		return nil
 	case tenant.FieldType:
-		v, ok := value.([]string)
+		v, ok := value.(string)
 		if !ok {
 			return fmt.Errorf("unexpected type %T for field %s", value, name)
 		}
 		m.SetType(v)
 		return nil
 	case tenant.FieldStatus:
-		v, ok := value.([]string)
+		v, ok := value.(string)
 		if !ok {
 			return fmt.Errorf("unexpected type %T for field %s", value, name)
 		}
 		m.SetStatus(v)
 		return nil
 	case tenant.FieldBrandName:
-		v, ok := value.([]string)
+		v, ok := value.(string)
 		if !ok {
 			return fmt.Errorf("unexpected type %T for field %s", value, name)
 		}
 		m.SetBrandName(v)
 		return nil
 	case tenant.FieldDomain:
-		v, ok := value.([]string)
+		v, ok := value.(string)
 		if !ok {
 			return fmt.Errorf("unexpected type %T for field %s", value, name)
 		}
 		m.SetDomain(v)
-		return nil
-	case tenant.FieldDomain3:
-		v, ok := value.([]string)
-		if !ok {
-			return fmt.Errorf("unexpected type %T for field %s", value, name)
-		}
-		m.SetDomain3(v)
 		return nil
 	}
 	return fmt.Errorf("unknown Tenant field %s", name)
@@ -721,7 +600,14 @@ func (m *TenantMutation) AddField(name string, value ent.Value) error {
 // ClearedFields returns all nullable fields that were cleared during this
 // mutation.
 func (m *TenantMutation) ClearedFields() []string {
-	return nil
+	var fields []string
+	if m.FieldCleared(tenant.FieldBrandName) {
+		fields = append(fields, tenant.FieldBrandName)
+	}
+	if m.FieldCleared(tenant.FieldDomain) {
+		fields = append(fields, tenant.FieldDomain)
+	}
+	return fields
 }
 
 // FieldCleared returns a boolean indicating if a field with the given name was
@@ -734,6 +620,14 @@ func (m *TenantMutation) FieldCleared(name string) bool {
 // ClearField clears the value of the field with the given name. It returns an
 // error if the field is not defined in the schema.
 func (m *TenantMutation) ClearField(name string) error {
+	switch name {
+	case tenant.FieldBrandName:
+		m.ClearBrandName()
+		return nil
+	case tenant.FieldDomain:
+		m.ClearDomain()
+		return nil
+	}
 	return fmt.Errorf("unknown Tenant nullable field %s", name)
 }
 
@@ -758,9 +652,6 @@ func (m *TenantMutation) ResetField(name string) error {
 		return nil
 	case tenant.FieldDomain:
 		m.ResetDomain()
-		return nil
-	case tenant.FieldDomain3:
-		m.ResetDomain3()
 		return nil
 	}
 	return fmt.Errorf("unknown Tenant field %s", name)

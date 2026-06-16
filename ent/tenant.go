@@ -3,7 +3,6 @@
 package ent
 
 import (
-	"encoding/json"
 	"fmt"
 	"message-platform/ent/tenant"
 	"strings"
@@ -20,17 +19,15 @@ type Tenant struct {
 	// ParentID holds the value of the "parent_id" field.
 	ParentID int `json:"parent_id,omitempty"`
 	// Name holds the value of the "name" field.
-	Name []string `json:"name,omitempty"`
+	Name string `json:"name,omitempty"`
 	// Type holds the value of the "type" field.
-	Type []string `json:"type,omitempty"`
+	Type string `json:"type,omitempty"`
 	// Status holds the value of the "status" field.
-	Status []string `json:"status,omitempty"`
+	Status string `json:"status,omitempty"`
 	// BrandName holds the value of the "brand_name" field.
-	BrandName []string `json:"brand_name,omitempty"`
+	BrandName string `json:"brand_name,omitempty"`
 	// Domain holds the value of the "domain" field.
-	Domain []string `json:"domain,omitempty"`
-	// Domain3 holds the value of the "domain3" field.
-	Domain3      []string `json:"domain3,omitempty"`
+	Domain       string `json:"domain,omitempty"`
 	selectValues sql.SelectValues
 }
 
@@ -39,10 +36,10 @@ func (*Tenant) scanValues(columns []string) ([]any, error) {
 	values := make([]any, len(columns))
 	for i := range columns {
 		switch columns[i] {
-		case tenant.FieldName, tenant.FieldType, tenant.FieldStatus, tenant.FieldBrandName, tenant.FieldDomain, tenant.FieldDomain3:
-			values[i] = new([]byte)
 		case tenant.FieldID, tenant.FieldParentID:
 			values[i] = new(sql.NullInt64)
+		case tenant.FieldName, tenant.FieldType, tenant.FieldStatus, tenant.FieldBrandName, tenant.FieldDomain:
+			values[i] = new(sql.NullString)
 		default:
 			values[i] = new(sql.UnknownType)
 		}
@@ -71,52 +68,34 @@ func (_m *Tenant) assignValues(columns []string, values []any) error {
 				_m.ParentID = int(value.Int64)
 			}
 		case tenant.FieldName:
-			if value, ok := values[i].(*[]byte); !ok {
+			if value, ok := values[i].(*sql.NullString); !ok {
 				return fmt.Errorf("unexpected type %T for field name", values[i])
-			} else if value != nil && len(*value) > 0 {
-				if err := json.Unmarshal(*value, &_m.Name); err != nil {
-					return fmt.Errorf("unmarshal field name: %w", err)
-				}
+			} else if value.Valid {
+				_m.Name = value.String
 			}
 		case tenant.FieldType:
-			if value, ok := values[i].(*[]byte); !ok {
+			if value, ok := values[i].(*sql.NullString); !ok {
 				return fmt.Errorf("unexpected type %T for field type", values[i])
-			} else if value != nil && len(*value) > 0 {
-				if err := json.Unmarshal(*value, &_m.Type); err != nil {
-					return fmt.Errorf("unmarshal field type: %w", err)
-				}
+			} else if value.Valid {
+				_m.Type = value.String
 			}
 		case tenant.FieldStatus:
-			if value, ok := values[i].(*[]byte); !ok {
+			if value, ok := values[i].(*sql.NullString); !ok {
 				return fmt.Errorf("unexpected type %T for field status", values[i])
-			} else if value != nil && len(*value) > 0 {
-				if err := json.Unmarshal(*value, &_m.Status); err != nil {
-					return fmt.Errorf("unmarshal field status: %w", err)
-				}
+			} else if value.Valid {
+				_m.Status = value.String
 			}
 		case tenant.FieldBrandName:
-			if value, ok := values[i].(*[]byte); !ok {
+			if value, ok := values[i].(*sql.NullString); !ok {
 				return fmt.Errorf("unexpected type %T for field brand_name", values[i])
-			} else if value != nil && len(*value) > 0 {
-				if err := json.Unmarshal(*value, &_m.BrandName); err != nil {
-					return fmt.Errorf("unmarshal field brand_name: %w", err)
-				}
+			} else if value.Valid {
+				_m.BrandName = value.String
 			}
 		case tenant.FieldDomain:
-			if value, ok := values[i].(*[]byte); !ok {
+			if value, ok := values[i].(*sql.NullString); !ok {
 				return fmt.Errorf("unexpected type %T for field domain", values[i])
-			} else if value != nil && len(*value) > 0 {
-				if err := json.Unmarshal(*value, &_m.Domain); err != nil {
-					return fmt.Errorf("unmarshal field domain: %w", err)
-				}
-			}
-		case tenant.FieldDomain3:
-			if value, ok := values[i].(*[]byte); !ok {
-				return fmt.Errorf("unexpected type %T for field domain3", values[i])
-			} else if value != nil && len(*value) > 0 {
-				if err := json.Unmarshal(*value, &_m.Domain3); err != nil {
-					return fmt.Errorf("unmarshal field domain3: %w", err)
-				}
+			} else if value.Valid {
+				_m.Domain = value.String
 			}
 		default:
 			_m.selectValues.Set(columns[i], values[i])
@@ -158,22 +137,19 @@ func (_m *Tenant) String() string {
 	builder.WriteString(fmt.Sprintf("%v", _m.ParentID))
 	builder.WriteString(", ")
 	builder.WriteString("name=")
-	builder.WriteString(fmt.Sprintf("%v", _m.Name))
+	builder.WriteString(_m.Name)
 	builder.WriteString(", ")
 	builder.WriteString("type=")
-	builder.WriteString(fmt.Sprintf("%v", _m.Type))
+	builder.WriteString(_m.Type)
 	builder.WriteString(", ")
 	builder.WriteString("status=")
-	builder.WriteString(fmt.Sprintf("%v", _m.Status))
+	builder.WriteString(_m.Status)
 	builder.WriteString(", ")
 	builder.WriteString("brand_name=")
-	builder.WriteString(fmt.Sprintf("%v", _m.BrandName))
+	builder.WriteString(_m.BrandName)
 	builder.WriteString(", ")
 	builder.WriteString("domain=")
-	builder.WriteString(fmt.Sprintf("%v", _m.Domain))
-	builder.WriteString(", ")
-	builder.WriteString("domain3=")
-	builder.WriteString(fmt.Sprintf("%v", _m.Domain3))
+	builder.WriteString(_m.Domain)
 	builder.WriteByte(')')
 	return builder.String()
 }

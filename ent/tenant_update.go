@@ -11,7 +11,6 @@ import (
 
 	"entgo.io/ent/dialect/sql"
 	"entgo.io/ent/dialect/sql/sqlgraph"
-	"entgo.io/ent/dialect/sql/sqljson"
 	"entgo.io/ent/schema/field"
 )
 
@@ -50,74 +49,84 @@ func (_u *TenantUpdate) AddParentID(v int) *TenantUpdate {
 }
 
 // SetName sets the "name" field.
-func (_u *TenantUpdate) SetName(v []string) *TenantUpdate {
+func (_u *TenantUpdate) SetName(v string) *TenantUpdate {
 	_u.mutation.SetName(v)
 	return _u
 }
 
-// AppendName appends value to the "name" field.
-func (_u *TenantUpdate) AppendName(v []string) *TenantUpdate {
-	_u.mutation.AppendName(v)
+// SetNillableName sets the "name" field if the given value is not nil.
+func (_u *TenantUpdate) SetNillableName(v *string) *TenantUpdate {
+	if v != nil {
+		_u.SetName(*v)
+	}
 	return _u
 }
 
 // SetType sets the "type" field.
-func (_u *TenantUpdate) SetType(v []string) *TenantUpdate {
+func (_u *TenantUpdate) SetType(v string) *TenantUpdate {
 	_u.mutation.SetType(v)
 	return _u
 }
 
-// AppendType appends value to the "type" field.
-func (_u *TenantUpdate) AppendType(v []string) *TenantUpdate {
-	_u.mutation.AppendType(v)
+// SetNillableType sets the "type" field if the given value is not nil.
+func (_u *TenantUpdate) SetNillableType(v *string) *TenantUpdate {
+	if v != nil {
+		_u.SetType(*v)
+	}
 	return _u
 }
 
 // SetStatus sets the "status" field.
-func (_u *TenantUpdate) SetStatus(v []string) *TenantUpdate {
+func (_u *TenantUpdate) SetStatus(v string) *TenantUpdate {
 	_u.mutation.SetStatus(v)
 	return _u
 }
 
-// AppendStatus appends value to the "status" field.
-func (_u *TenantUpdate) AppendStatus(v []string) *TenantUpdate {
-	_u.mutation.AppendStatus(v)
+// SetNillableStatus sets the "status" field if the given value is not nil.
+func (_u *TenantUpdate) SetNillableStatus(v *string) *TenantUpdate {
+	if v != nil {
+		_u.SetStatus(*v)
+	}
 	return _u
 }
 
 // SetBrandName sets the "brand_name" field.
-func (_u *TenantUpdate) SetBrandName(v []string) *TenantUpdate {
+func (_u *TenantUpdate) SetBrandName(v string) *TenantUpdate {
 	_u.mutation.SetBrandName(v)
 	return _u
 }
 
-// AppendBrandName appends value to the "brand_name" field.
-func (_u *TenantUpdate) AppendBrandName(v []string) *TenantUpdate {
-	_u.mutation.AppendBrandName(v)
+// SetNillableBrandName sets the "brand_name" field if the given value is not nil.
+func (_u *TenantUpdate) SetNillableBrandName(v *string) *TenantUpdate {
+	if v != nil {
+		_u.SetBrandName(*v)
+	}
+	return _u
+}
+
+// ClearBrandName clears the value of the "brand_name" field.
+func (_u *TenantUpdate) ClearBrandName() *TenantUpdate {
+	_u.mutation.ClearBrandName()
 	return _u
 }
 
 // SetDomain sets the "domain" field.
-func (_u *TenantUpdate) SetDomain(v []string) *TenantUpdate {
+func (_u *TenantUpdate) SetDomain(v string) *TenantUpdate {
 	_u.mutation.SetDomain(v)
 	return _u
 }
 
-// AppendDomain appends value to the "domain" field.
-func (_u *TenantUpdate) AppendDomain(v []string) *TenantUpdate {
-	_u.mutation.AppendDomain(v)
+// SetNillableDomain sets the "domain" field if the given value is not nil.
+func (_u *TenantUpdate) SetNillableDomain(v *string) *TenantUpdate {
+	if v != nil {
+		_u.SetDomain(*v)
+	}
 	return _u
 }
 
-// SetDomain3 sets the "domain3" field.
-func (_u *TenantUpdate) SetDomain3(v []string) *TenantUpdate {
-	_u.mutation.SetDomain3(v)
-	return _u
-}
-
-// AppendDomain3 appends value to the "domain3" field.
-func (_u *TenantUpdate) AppendDomain3(v []string) *TenantUpdate {
-	_u.mutation.AppendDomain3(v)
+// ClearDomain clears the value of the "domain" field.
+func (_u *TenantUpdate) ClearDomain() *TenantUpdate {
+	_u.mutation.ClearDomain()
 	return _u
 }
 
@@ -169,52 +178,25 @@ func (_u *TenantUpdate) sqlSave(ctx context.Context) (_node int, err error) {
 		_spec.AddField(tenant.FieldParentID, field.TypeInt, value)
 	}
 	if value, ok := _u.mutation.Name(); ok {
-		_spec.SetField(tenant.FieldName, field.TypeJSON, value)
-	}
-	if value, ok := _u.mutation.AppendedName(); ok {
-		_spec.AddModifier(func(u *sql.UpdateBuilder) {
-			sqljson.Append(u, tenant.FieldName, value)
-		})
+		_spec.SetField(tenant.FieldName, field.TypeString, value)
 	}
 	if value, ok := _u.mutation.GetType(); ok {
-		_spec.SetField(tenant.FieldType, field.TypeJSON, value)
-	}
-	if value, ok := _u.mutation.AppendedType(); ok {
-		_spec.AddModifier(func(u *sql.UpdateBuilder) {
-			sqljson.Append(u, tenant.FieldType, value)
-		})
+		_spec.SetField(tenant.FieldType, field.TypeString, value)
 	}
 	if value, ok := _u.mutation.Status(); ok {
-		_spec.SetField(tenant.FieldStatus, field.TypeJSON, value)
-	}
-	if value, ok := _u.mutation.AppendedStatus(); ok {
-		_spec.AddModifier(func(u *sql.UpdateBuilder) {
-			sqljson.Append(u, tenant.FieldStatus, value)
-		})
+		_spec.SetField(tenant.FieldStatus, field.TypeString, value)
 	}
 	if value, ok := _u.mutation.BrandName(); ok {
-		_spec.SetField(tenant.FieldBrandName, field.TypeJSON, value)
+		_spec.SetField(tenant.FieldBrandName, field.TypeString, value)
 	}
-	if value, ok := _u.mutation.AppendedBrandName(); ok {
-		_spec.AddModifier(func(u *sql.UpdateBuilder) {
-			sqljson.Append(u, tenant.FieldBrandName, value)
-		})
+	if _u.mutation.BrandNameCleared() {
+		_spec.ClearField(tenant.FieldBrandName, field.TypeString)
 	}
 	if value, ok := _u.mutation.Domain(); ok {
-		_spec.SetField(tenant.FieldDomain, field.TypeJSON, value)
+		_spec.SetField(tenant.FieldDomain, field.TypeString, value)
 	}
-	if value, ok := _u.mutation.AppendedDomain(); ok {
-		_spec.AddModifier(func(u *sql.UpdateBuilder) {
-			sqljson.Append(u, tenant.FieldDomain, value)
-		})
-	}
-	if value, ok := _u.mutation.Domain3(); ok {
-		_spec.SetField(tenant.FieldDomain3, field.TypeJSON, value)
-	}
-	if value, ok := _u.mutation.AppendedDomain3(); ok {
-		_spec.AddModifier(func(u *sql.UpdateBuilder) {
-			sqljson.Append(u, tenant.FieldDomain3, value)
-		})
+	if _u.mutation.DomainCleared() {
+		_spec.ClearField(tenant.FieldDomain, field.TypeString)
 	}
 	if _node, err = sqlgraph.UpdateNodes(ctx, _u.driver, _spec); err != nil {
 		if _, ok := err.(*sqlgraph.NotFoundError); ok {
@@ -258,74 +240,84 @@ func (_u *TenantUpdateOne) AddParentID(v int) *TenantUpdateOne {
 }
 
 // SetName sets the "name" field.
-func (_u *TenantUpdateOne) SetName(v []string) *TenantUpdateOne {
+func (_u *TenantUpdateOne) SetName(v string) *TenantUpdateOne {
 	_u.mutation.SetName(v)
 	return _u
 }
 
-// AppendName appends value to the "name" field.
-func (_u *TenantUpdateOne) AppendName(v []string) *TenantUpdateOne {
-	_u.mutation.AppendName(v)
+// SetNillableName sets the "name" field if the given value is not nil.
+func (_u *TenantUpdateOne) SetNillableName(v *string) *TenantUpdateOne {
+	if v != nil {
+		_u.SetName(*v)
+	}
 	return _u
 }
 
 // SetType sets the "type" field.
-func (_u *TenantUpdateOne) SetType(v []string) *TenantUpdateOne {
+func (_u *TenantUpdateOne) SetType(v string) *TenantUpdateOne {
 	_u.mutation.SetType(v)
 	return _u
 }
 
-// AppendType appends value to the "type" field.
-func (_u *TenantUpdateOne) AppendType(v []string) *TenantUpdateOne {
-	_u.mutation.AppendType(v)
+// SetNillableType sets the "type" field if the given value is not nil.
+func (_u *TenantUpdateOne) SetNillableType(v *string) *TenantUpdateOne {
+	if v != nil {
+		_u.SetType(*v)
+	}
 	return _u
 }
 
 // SetStatus sets the "status" field.
-func (_u *TenantUpdateOne) SetStatus(v []string) *TenantUpdateOne {
+func (_u *TenantUpdateOne) SetStatus(v string) *TenantUpdateOne {
 	_u.mutation.SetStatus(v)
 	return _u
 }
 
-// AppendStatus appends value to the "status" field.
-func (_u *TenantUpdateOne) AppendStatus(v []string) *TenantUpdateOne {
-	_u.mutation.AppendStatus(v)
+// SetNillableStatus sets the "status" field if the given value is not nil.
+func (_u *TenantUpdateOne) SetNillableStatus(v *string) *TenantUpdateOne {
+	if v != nil {
+		_u.SetStatus(*v)
+	}
 	return _u
 }
 
 // SetBrandName sets the "brand_name" field.
-func (_u *TenantUpdateOne) SetBrandName(v []string) *TenantUpdateOne {
+func (_u *TenantUpdateOne) SetBrandName(v string) *TenantUpdateOne {
 	_u.mutation.SetBrandName(v)
 	return _u
 }
 
-// AppendBrandName appends value to the "brand_name" field.
-func (_u *TenantUpdateOne) AppendBrandName(v []string) *TenantUpdateOne {
-	_u.mutation.AppendBrandName(v)
+// SetNillableBrandName sets the "brand_name" field if the given value is not nil.
+func (_u *TenantUpdateOne) SetNillableBrandName(v *string) *TenantUpdateOne {
+	if v != nil {
+		_u.SetBrandName(*v)
+	}
+	return _u
+}
+
+// ClearBrandName clears the value of the "brand_name" field.
+func (_u *TenantUpdateOne) ClearBrandName() *TenantUpdateOne {
+	_u.mutation.ClearBrandName()
 	return _u
 }
 
 // SetDomain sets the "domain" field.
-func (_u *TenantUpdateOne) SetDomain(v []string) *TenantUpdateOne {
+func (_u *TenantUpdateOne) SetDomain(v string) *TenantUpdateOne {
 	_u.mutation.SetDomain(v)
 	return _u
 }
 
-// AppendDomain appends value to the "domain" field.
-func (_u *TenantUpdateOne) AppendDomain(v []string) *TenantUpdateOne {
-	_u.mutation.AppendDomain(v)
+// SetNillableDomain sets the "domain" field if the given value is not nil.
+func (_u *TenantUpdateOne) SetNillableDomain(v *string) *TenantUpdateOne {
+	if v != nil {
+		_u.SetDomain(*v)
+	}
 	return _u
 }
 
-// SetDomain3 sets the "domain3" field.
-func (_u *TenantUpdateOne) SetDomain3(v []string) *TenantUpdateOne {
-	_u.mutation.SetDomain3(v)
-	return _u
-}
-
-// AppendDomain3 appends value to the "domain3" field.
-func (_u *TenantUpdateOne) AppendDomain3(v []string) *TenantUpdateOne {
-	_u.mutation.AppendDomain3(v)
+// ClearDomain clears the value of the "domain" field.
+func (_u *TenantUpdateOne) ClearDomain() *TenantUpdateOne {
+	_u.mutation.ClearDomain()
 	return _u
 }
 
@@ -407,52 +399,25 @@ func (_u *TenantUpdateOne) sqlSave(ctx context.Context) (_node *Tenant, err erro
 		_spec.AddField(tenant.FieldParentID, field.TypeInt, value)
 	}
 	if value, ok := _u.mutation.Name(); ok {
-		_spec.SetField(tenant.FieldName, field.TypeJSON, value)
-	}
-	if value, ok := _u.mutation.AppendedName(); ok {
-		_spec.AddModifier(func(u *sql.UpdateBuilder) {
-			sqljson.Append(u, tenant.FieldName, value)
-		})
+		_spec.SetField(tenant.FieldName, field.TypeString, value)
 	}
 	if value, ok := _u.mutation.GetType(); ok {
-		_spec.SetField(tenant.FieldType, field.TypeJSON, value)
-	}
-	if value, ok := _u.mutation.AppendedType(); ok {
-		_spec.AddModifier(func(u *sql.UpdateBuilder) {
-			sqljson.Append(u, tenant.FieldType, value)
-		})
+		_spec.SetField(tenant.FieldType, field.TypeString, value)
 	}
 	if value, ok := _u.mutation.Status(); ok {
-		_spec.SetField(tenant.FieldStatus, field.TypeJSON, value)
-	}
-	if value, ok := _u.mutation.AppendedStatus(); ok {
-		_spec.AddModifier(func(u *sql.UpdateBuilder) {
-			sqljson.Append(u, tenant.FieldStatus, value)
-		})
+		_spec.SetField(tenant.FieldStatus, field.TypeString, value)
 	}
 	if value, ok := _u.mutation.BrandName(); ok {
-		_spec.SetField(tenant.FieldBrandName, field.TypeJSON, value)
+		_spec.SetField(tenant.FieldBrandName, field.TypeString, value)
 	}
-	if value, ok := _u.mutation.AppendedBrandName(); ok {
-		_spec.AddModifier(func(u *sql.UpdateBuilder) {
-			sqljson.Append(u, tenant.FieldBrandName, value)
-		})
+	if _u.mutation.BrandNameCleared() {
+		_spec.ClearField(tenant.FieldBrandName, field.TypeString)
 	}
 	if value, ok := _u.mutation.Domain(); ok {
-		_spec.SetField(tenant.FieldDomain, field.TypeJSON, value)
+		_spec.SetField(tenant.FieldDomain, field.TypeString, value)
 	}
-	if value, ok := _u.mutation.AppendedDomain(); ok {
-		_spec.AddModifier(func(u *sql.UpdateBuilder) {
-			sqljson.Append(u, tenant.FieldDomain, value)
-		})
-	}
-	if value, ok := _u.mutation.Domain3(); ok {
-		_spec.SetField(tenant.FieldDomain3, field.TypeJSON, value)
-	}
-	if value, ok := _u.mutation.AppendedDomain3(); ok {
-		_spec.AddModifier(func(u *sql.UpdateBuilder) {
-			sqljson.Append(u, tenant.FieldDomain3, value)
-		})
+	if _u.mutation.DomainCleared() {
+		_spec.ClearField(tenant.FieldDomain, field.TypeString)
 	}
 	_node = &Tenant{config: _u.config}
 	_spec.Assign = _node.assignValues

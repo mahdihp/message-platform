@@ -26,38 +26,48 @@ func (_c *TenantCreate) SetParentID(v int) *TenantCreate {
 }
 
 // SetName sets the "name" field.
-func (_c *TenantCreate) SetName(v []string) *TenantCreate {
+func (_c *TenantCreate) SetName(v string) *TenantCreate {
 	_c.mutation.SetName(v)
 	return _c
 }
 
 // SetType sets the "type" field.
-func (_c *TenantCreate) SetType(v []string) *TenantCreate {
+func (_c *TenantCreate) SetType(v string) *TenantCreate {
 	_c.mutation.SetType(v)
 	return _c
 }
 
 // SetStatus sets the "status" field.
-func (_c *TenantCreate) SetStatus(v []string) *TenantCreate {
+func (_c *TenantCreate) SetStatus(v string) *TenantCreate {
 	_c.mutation.SetStatus(v)
 	return _c
 }
 
 // SetBrandName sets the "brand_name" field.
-func (_c *TenantCreate) SetBrandName(v []string) *TenantCreate {
+func (_c *TenantCreate) SetBrandName(v string) *TenantCreate {
 	_c.mutation.SetBrandName(v)
 	return _c
 }
 
+// SetNillableBrandName sets the "brand_name" field if the given value is not nil.
+func (_c *TenantCreate) SetNillableBrandName(v *string) *TenantCreate {
+	if v != nil {
+		_c.SetBrandName(*v)
+	}
+	return _c
+}
+
 // SetDomain sets the "domain" field.
-func (_c *TenantCreate) SetDomain(v []string) *TenantCreate {
+func (_c *TenantCreate) SetDomain(v string) *TenantCreate {
 	_c.mutation.SetDomain(v)
 	return _c
 }
 
-// SetDomain3 sets the "domain3" field.
-func (_c *TenantCreate) SetDomain3(v []string) *TenantCreate {
-	_c.mutation.SetDomain3(v)
+// SetNillableDomain sets the "domain" field if the given value is not nil.
+func (_c *TenantCreate) SetNillableDomain(v *string) *TenantCreate {
+	if v != nil {
+		_c.SetDomain(*v)
+	}
 	return _c
 }
 
@@ -113,15 +123,6 @@ func (_c *TenantCreate) check() error {
 	if _, ok := _c.mutation.Status(); !ok {
 		return &ValidationError{Name: "status", err: errors.New(`ent: missing required field "Tenant.status"`)}
 	}
-	if _, ok := _c.mutation.BrandName(); !ok {
-		return &ValidationError{Name: "brand_name", err: errors.New(`ent: missing required field "Tenant.brand_name"`)}
-	}
-	if _, ok := _c.mutation.Domain(); !ok {
-		return &ValidationError{Name: "domain", err: errors.New(`ent: missing required field "Tenant.domain"`)}
-	}
-	if _, ok := _c.mutation.Domain3(); !ok {
-		return &ValidationError{Name: "domain3", err: errors.New(`ent: missing required field "Tenant.domain3"`)}
-	}
 	return nil
 }
 
@@ -159,28 +160,24 @@ func (_c *TenantCreate) createSpec() (*Tenant, *sqlgraph.CreateSpec) {
 		_node.ParentID = value
 	}
 	if value, ok := _c.mutation.Name(); ok {
-		_spec.SetField(tenant.FieldName, field.TypeJSON, value)
+		_spec.SetField(tenant.FieldName, field.TypeString, value)
 		_node.Name = value
 	}
 	if value, ok := _c.mutation.GetType(); ok {
-		_spec.SetField(tenant.FieldType, field.TypeJSON, value)
+		_spec.SetField(tenant.FieldType, field.TypeString, value)
 		_node.Type = value
 	}
 	if value, ok := _c.mutation.Status(); ok {
-		_spec.SetField(tenant.FieldStatus, field.TypeJSON, value)
+		_spec.SetField(tenant.FieldStatus, field.TypeString, value)
 		_node.Status = value
 	}
 	if value, ok := _c.mutation.BrandName(); ok {
-		_spec.SetField(tenant.FieldBrandName, field.TypeJSON, value)
+		_spec.SetField(tenant.FieldBrandName, field.TypeString, value)
 		_node.BrandName = value
 	}
 	if value, ok := _c.mutation.Domain(); ok {
-		_spec.SetField(tenant.FieldDomain, field.TypeJSON, value)
+		_spec.SetField(tenant.FieldDomain, field.TypeString, value)
 		_node.Domain = value
-	}
-	if value, ok := _c.mutation.Domain3(); ok {
-		_spec.SetField(tenant.FieldDomain3, field.TypeJSON, value)
-		_node.Domain3 = value
 	}
 	return _node, _spec
 }
