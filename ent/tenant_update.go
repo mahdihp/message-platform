@@ -76,13 +76,13 @@ func (_u *TenantUpdate) SetNillableType(v *tenant.Type) *TenantUpdate {
 }
 
 // SetStatus sets the "status" field.
-func (_u *TenantUpdate) SetStatus(v string) *TenantUpdate {
+func (_u *TenantUpdate) SetStatus(v tenant.Status) *TenantUpdate {
 	_u.mutation.SetStatus(v)
 	return _u
 }
 
 // SetNillableStatus sets the "status" field if the given value is not nil.
-func (_u *TenantUpdate) SetNillableStatus(v *string) *TenantUpdate {
+func (_u *TenantUpdate) SetNillableStatus(v *tenant.Status) *TenantUpdate {
 	if v != nil {
 		_u.SetStatus(*v)
 	}
@@ -210,9 +210,29 @@ func (_u *TenantUpdate) ExecX(ctx context.Context) {
 
 // check runs all checks and user-defined validators on the builder.
 func (_u *TenantUpdate) check() error {
+	if v, ok := _u.mutation.Name(); ok {
+		if err := tenant.NameValidator(v); err != nil {
+			return &ValidationError{Name: "name", err: fmt.Errorf(`ent: validator failed for field "Tenant.name": %w`, err)}
+		}
+	}
 	if v, ok := _u.mutation.GetType(); ok {
 		if err := tenant.TypeValidator(v); err != nil {
 			return &ValidationError{Name: "type", err: fmt.Errorf(`ent: validator failed for field "Tenant.type": %w`, err)}
+		}
+	}
+	if v, ok := _u.mutation.Status(); ok {
+		if err := tenant.StatusValidator(v); err != nil {
+			return &ValidationError{Name: "status", err: fmt.Errorf(`ent: validator failed for field "Tenant.status": %w`, err)}
+		}
+	}
+	if v, ok := _u.mutation.BrandName(); ok {
+		if err := tenant.BrandNameValidator(v); err != nil {
+			return &ValidationError{Name: "brand_name", err: fmt.Errorf(`ent: validator failed for field "Tenant.brand_name": %w`, err)}
+		}
+	}
+	if v, ok := _u.mutation.Domain(); ok {
+		if err := tenant.DomainValidator(v); err != nil {
+			return &ValidationError{Name: "domain", err: fmt.Errorf(`ent: validator failed for field "Tenant.domain": %w`, err)}
 		}
 	}
 	return nil
@@ -237,7 +257,7 @@ func (_u *TenantUpdate) sqlSave(ctx context.Context) (_node int, err error) {
 		_spec.SetField(tenant.FieldType, field.TypeEnum, value)
 	}
 	if value, ok := _u.mutation.Status(); ok {
-		_spec.SetField(tenant.FieldStatus, field.TypeString, value)
+		_spec.SetField(tenant.FieldStatus, field.TypeEnum, value)
 	}
 	if value, ok := _u.mutation.BrandName(); ok {
 		_spec.SetField(tenant.FieldBrandName, field.TypeString, value)
@@ -394,13 +414,13 @@ func (_u *TenantUpdateOne) SetNillableType(v *tenant.Type) *TenantUpdateOne {
 }
 
 // SetStatus sets the "status" field.
-func (_u *TenantUpdateOne) SetStatus(v string) *TenantUpdateOne {
+func (_u *TenantUpdateOne) SetStatus(v tenant.Status) *TenantUpdateOne {
 	_u.mutation.SetStatus(v)
 	return _u
 }
 
 // SetNillableStatus sets the "status" field if the given value is not nil.
-func (_u *TenantUpdateOne) SetNillableStatus(v *string) *TenantUpdateOne {
+func (_u *TenantUpdateOne) SetNillableStatus(v *tenant.Status) *TenantUpdateOne {
 	if v != nil {
 		_u.SetStatus(*v)
 	}
@@ -541,9 +561,29 @@ func (_u *TenantUpdateOne) ExecX(ctx context.Context) {
 
 // check runs all checks and user-defined validators on the builder.
 func (_u *TenantUpdateOne) check() error {
+	if v, ok := _u.mutation.Name(); ok {
+		if err := tenant.NameValidator(v); err != nil {
+			return &ValidationError{Name: "name", err: fmt.Errorf(`ent: validator failed for field "Tenant.name": %w`, err)}
+		}
+	}
 	if v, ok := _u.mutation.GetType(); ok {
 		if err := tenant.TypeValidator(v); err != nil {
 			return &ValidationError{Name: "type", err: fmt.Errorf(`ent: validator failed for field "Tenant.type": %w`, err)}
+		}
+	}
+	if v, ok := _u.mutation.Status(); ok {
+		if err := tenant.StatusValidator(v); err != nil {
+			return &ValidationError{Name: "status", err: fmt.Errorf(`ent: validator failed for field "Tenant.status": %w`, err)}
+		}
+	}
+	if v, ok := _u.mutation.BrandName(); ok {
+		if err := tenant.BrandNameValidator(v); err != nil {
+			return &ValidationError{Name: "brand_name", err: fmt.Errorf(`ent: validator failed for field "Tenant.brand_name": %w`, err)}
+		}
+	}
+	if v, ok := _u.mutation.Domain(); ok {
+		if err := tenant.DomainValidator(v); err != nil {
+			return &ValidationError{Name: "domain", err: fmt.Errorf(`ent: validator failed for field "Tenant.domain": %w`, err)}
 		}
 	}
 	return nil
@@ -585,7 +625,7 @@ func (_u *TenantUpdateOne) sqlSave(ctx context.Context) (_node *Tenant, err erro
 		_spec.SetField(tenant.FieldType, field.TypeEnum, value)
 	}
 	if value, ok := _u.mutation.Status(); ok {
-		_spec.SetField(tenant.FieldStatus, field.TypeString, value)
+		_spec.SetField(tenant.FieldStatus, field.TypeEnum, value)
 	}
 	if value, ok := _u.mutation.BrandName(); ok {
 		_spec.SetField(tenant.FieldBrandName, field.TypeString, value)

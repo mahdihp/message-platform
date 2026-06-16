@@ -63,6 +63,15 @@ func ValidColumn(column string) bool {
 	return false
 }
 
+var (
+	// NameValidator is a validator for the "name" field. It is called by the builders before save.
+	NameValidator func(string) error
+	// BrandNameValidator is a validator for the "brand_name" field. It is called by the builders before save.
+	BrandNameValidator func(string) error
+	// DomainValidator is a validator for the "domain" field. It is called by the builders before save.
+	DomainValidator func(string) error
+)
+
 // Type defines the type for the "type" enum field.
 type Type string
 
@@ -72,6 +81,8 @@ const DefaultType = TypePlatform
 // Type values.
 const (
 	TypePlatform Type = "platform"
+	TypeReseller Type = "reseller"
+	TypeCustomer Type = "customer"
 )
 
 func (_type Type) String() string {
@@ -81,10 +92,38 @@ func (_type Type) String() string {
 // TypeValidator is a validator for the "type" field enum values. It is called by the builders before save.
 func TypeValidator(_type Type) error {
 	switch _type {
-	case TypePlatform:
+	case TypePlatform, TypeReseller, TypeCustomer:
 		return nil
 	default:
 		return fmt.Errorf("tenant: invalid enum value for type field: %q", _type)
+	}
+}
+
+// Status defines the type for the "status" enum field.
+type Status string
+
+// StatusDraft is the default value of the Status enum.
+const DefaultStatus = StatusDraft
+
+// Status values.
+const (
+	StatusDraft     Status = "draft"
+	StatusPending   Status = "pending"
+	StatusVerified  Status = "verified"
+	StatusSuspended Status = "suspended"
+)
+
+func (s Status) String() string {
+	return string(s)
+}
+
+// StatusValidator is a validator for the "status" field enum values. It is called by the builders before save.
+func StatusValidator(s Status) error {
+	switch s {
+	case StatusDraft, StatusPending, StatusVerified, StatusSuspended:
+		return nil
+	default:
+		return fmt.Errorf("tenant: invalid enum value for status field: %q", s)
 	}
 }
 

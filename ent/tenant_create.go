@@ -54,8 +54,16 @@ func (_c *TenantCreate) SetNillableType(v *tenant.Type) *TenantCreate {
 }
 
 // SetStatus sets the "status" field.
-func (_c *TenantCreate) SetStatus(v string) *TenantCreate {
+func (_c *TenantCreate) SetStatus(v tenant.Status) *TenantCreate {
 	_c.mutation.SetStatus(v)
+	return _c
+}
+
+// SetNillableStatus sets the "status" field if the given value is not nil.
+func (_c *TenantCreate) SetNillableStatus(v *tenant.Status) *TenantCreate {
+	if v != nil {
+		_c.SetStatus(*v)
+	}
 	return _c
 }
 
@@ -152,12 +160,21 @@ func (_c *TenantCreate) defaults() {
 		v := tenant.DefaultType
 		_c.mutation.SetType(v)
 	}
+	if _, ok := _c.mutation.Status(); !ok {
+		v := tenant.DefaultStatus
+		_c.mutation.SetStatus(v)
+	}
 }
 
 // check runs all checks and user-defined validators on the builder.
 func (_c *TenantCreate) check() error {
 	if _, ok := _c.mutation.Name(); !ok {
 		return &ValidationError{Name: "name", err: errors.New(`ent: missing required field "Tenant.name"`)}
+	}
+	if v, ok := _c.mutation.Name(); ok {
+		if err := tenant.NameValidator(v); err != nil {
+			return &ValidationError{Name: "name", err: fmt.Errorf(`ent: validator failed for field "Tenant.name": %w`, err)}
+		}
 	}
 	if _, ok := _c.mutation.GetType(); !ok {
 		return &ValidationError{Name: "type", err: errors.New(`ent: missing required field "Tenant.type"`)}
@@ -169,6 +186,21 @@ func (_c *TenantCreate) check() error {
 	}
 	if _, ok := _c.mutation.Status(); !ok {
 		return &ValidationError{Name: "status", err: errors.New(`ent: missing required field "Tenant.status"`)}
+	}
+	if v, ok := _c.mutation.Status(); ok {
+		if err := tenant.StatusValidator(v); err != nil {
+			return &ValidationError{Name: "status", err: fmt.Errorf(`ent: validator failed for field "Tenant.status": %w`, err)}
+		}
+	}
+	if v, ok := _c.mutation.BrandName(); ok {
+		if err := tenant.BrandNameValidator(v); err != nil {
+			return &ValidationError{Name: "brand_name", err: fmt.Errorf(`ent: validator failed for field "Tenant.brand_name": %w`, err)}
+		}
+	}
+	if v, ok := _c.mutation.Domain(); ok {
+		if err := tenant.DomainValidator(v); err != nil {
+			return &ValidationError{Name: "domain", err: fmt.Errorf(`ent: validator failed for field "Tenant.domain": %w`, err)}
+		}
 	}
 	return nil
 }
@@ -211,7 +243,7 @@ func (_c *TenantCreate) createSpec() (*Tenant, *sqlgraph.CreateSpec) {
 		_node.Type = value
 	}
 	if value, ok := _c.mutation.Status(); ok {
-		_spec.SetField(tenant.FieldStatus, field.TypeString, value)
+		_spec.SetField(tenant.FieldStatus, field.TypeEnum, value)
 		_node.Status = value
 	}
 	if value, ok := _c.mutation.BrandName(); ok {

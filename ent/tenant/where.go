@@ -64,11 +64,6 @@ func Name(v string) predicate.Tenant {
 	return predicate.Tenant(sql.FieldEQ(FieldName, v))
 }
 
-// Status applies equality check predicate on the "status" field. It's identical to StatusEQ.
-func Status(v string) predicate.Tenant {
-	return predicate.Tenant(sql.FieldEQ(FieldStatus, v))
-}
-
 // BrandName applies equality check predicate on the "brand_name" field. It's identical to BrandNameEQ.
 func BrandName(v string) predicate.Tenant {
 	return predicate.Tenant(sql.FieldEQ(FieldBrandName, v))
@@ -195,68 +190,23 @@ func TypeNotIn(vs ...Type) predicate.Tenant {
 }
 
 // StatusEQ applies the EQ predicate on the "status" field.
-func StatusEQ(v string) predicate.Tenant {
+func StatusEQ(v Status) predicate.Tenant {
 	return predicate.Tenant(sql.FieldEQ(FieldStatus, v))
 }
 
 // StatusNEQ applies the NEQ predicate on the "status" field.
-func StatusNEQ(v string) predicate.Tenant {
+func StatusNEQ(v Status) predicate.Tenant {
 	return predicate.Tenant(sql.FieldNEQ(FieldStatus, v))
 }
 
 // StatusIn applies the In predicate on the "status" field.
-func StatusIn(vs ...string) predicate.Tenant {
+func StatusIn(vs ...Status) predicate.Tenant {
 	return predicate.Tenant(sql.FieldIn(FieldStatus, vs...))
 }
 
 // StatusNotIn applies the NotIn predicate on the "status" field.
-func StatusNotIn(vs ...string) predicate.Tenant {
+func StatusNotIn(vs ...Status) predicate.Tenant {
 	return predicate.Tenant(sql.FieldNotIn(FieldStatus, vs...))
-}
-
-// StatusGT applies the GT predicate on the "status" field.
-func StatusGT(v string) predicate.Tenant {
-	return predicate.Tenant(sql.FieldGT(FieldStatus, v))
-}
-
-// StatusGTE applies the GTE predicate on the "status" field.
-func StatusGTE(v string) predicate.Tenant {
-	return predicate.Tenant(sql.FieldGTE(FieldStatus, v))
-}
-
-// StatusLT applies the LT predicate on the "status" field.
-func StatusLT(v string) predicate.Tenant {
-	return predicate.Tenant(sql.FieldLT(FieldStatus, v))
-}
-
-// StatusLTE applies the LTE predicate on the "status" field.
-func StatusLTE(v string) predicate.Tenant {
-	return predicate.Tenant(sql.FieldLTE(FieldStatus, v))
-}
-
-// StatusContains applies the Contains predicate on the "status" field.
-func StatusContains(v string) predicate.Tenant {
-	return predicate.Tenant(sql.FieldContains(FieldStatus, v))
-}
-
-// StatusHasPrefix applies the HasPrefix predicate on the "status" field.
-func StatusHasPrefix(v string) predicate.Tenant {
-	return predicate.Tenant(sql.FieldHasPrefix(FieldStatus, v))
-}
-
-// StatusHasSuffix applies the HasSuffix predicate on the "status" field.
-func StatusHasSuffix(v string) predicate.Tenant {
-	return predicate.Tenant(sql.FieldHasSuffix(FieldStatus, v))
-}
-
-// StatusEqualFold applies the EqualFold predicate on the "status" field.
-func StatusEqualFold(v string) predicate.Tenant {
-	return predicate.Tenant(sql.FieldEqualFold(FieldStatus, v))
-}
-
-// StatusContainsFold applies the ContainsFold predicate on the "status" field.
-func StatusContainsFold(v string) predicate.Tenant {
-	return predicate.Tenant(sql.FieldContainsFold(FieldStatus, v))
 }
 
 // BrandNameEQ applies the EQ predicate on the "brand_name" field.

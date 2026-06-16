@@ -11,11 +11,11 @@ var (
 	// TenantsColumns holds the columns for the "tenants" table.
 	TenantsColumns = []*schema.Column{
 		{Name: "id", Type: field.TypeInt, Increment: true},
-		{Name: "name", Type: field.TypeString},
-		{Name: "type", Type: field.TypeEnum, Enums: []string{"platform"}, Default: "platform"},
-		{Name: "status", Type: field.TypeString},
-		{Name: "brand_name", Type: field.TypeString, Unique: true, Nullable: true},
-		{Name: "domain", Type: field.TypeString, Unique: true, Nullable: true},
+		{Name: "name", Type: field.TypeString, Unique: true, Size: 50},
+		{Name: "type", Type: field.TypeEnum, Enums: []string{"platform", "reseller", "customer"}, Default: "platform"},
+		{Name: "status", Type: field.TypeEnum, Enums: []string{"draft", "pending", "verified", "suspended"}, Default: "draft"},
+		{Name: "brand_name", Type: field.TypeString, Unique: true, Nullable: true, Size: 50},
+		{Name: "domain", Type: field.TypeString, Unique: true, Nullable: true, Size: 200},
 		{Name: "parent_id", Type: field.TypeInt, Nullable: true},
 	}
 	// TenantsTable holds the schema information for the "tenants" table.
@@ -32,9 +32,28 @@ var (
 			},
 		},
 	}
+	// UsersColumns holds the columns for the "users" table.
+	UsersColumns = []*schema.Column{
+		{Name: "id", Type: field.TypeInt64, Increment: true},
+		{Name: "tenant_id", Type: field.TypeInt},
+		{Name: "first_name", Type: field.TypeString, Size: 50},
+		{Name: "last_name", Type: field.TypeString, Size: 50},
+		{Name: "mobile", Type: field.TypeString, Size: 11},
+		{Name: "email", Type: field.TypeString, Size: 100},
+		{Name: "password_hash", Type: field.TypeString},
+		{Name: "status", Type: field.TypeBool},
+		{Name: "status2", Type: field.TypeBool},
+	}
+	// UsersTable holds the schema information for the "users" table.
+	UsersTable = &schema.Table{
+		Name:       "users",
+		Columns:    UsersColumns,
+		PrimaryKey: []*schema.Column{UsersColumns[0]},
+	}
 	// Tables holds all the tables in the schema.
 	Tables = []*schema.Table{
 		TenantsTable,
+		UsersTable,
 	}
 )
 

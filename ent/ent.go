@@ -7,6 +7,7 @@ import (
 	"errors"
 	"fmt"
 	"message-platform/ent/tenant"
+	"message-platform/ent/user"
 	"reflect"
 	"sync"
 
@@ -74,6 +75,7 @@ func checkColumn(t, c string) error {
 	initCheck.Do(func() {
 		columnCheck = sql.NewColumnCheck(map[string]func(string) bool{
 			tenant.Table: tenant.ValidColumn,
+			user.Table:   user.ValidColumn,
 		})
 	})
 	return columnCheck(t, c)

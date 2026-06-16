@@ -23,7 +23,7 @@ type Tenant struct {
 	// Type holds the value of the "type" field.
 	Type tenant.Type `json:"type,omitempty"`
 	// Status holds the value of the "status" field.
-	Status string `json:"status,omitempty"`
+	Status tenant.Status `json:"status,omitempty"`
 	// BrandName holds the value of the "brand_name" field.
 	BrandName string `json:"brand_name,omitempty"`
 	// Domain holds the value of the "domain" field.
@@ -117,7 +117,7 @@ func (_m *Tenant) assignValues(columns []string, values []any) error {
 			if value, ok := values[i].(*sql.NullString); !ok {
 				return fmt.Errorf("unexpected type %T for field status", values[i])
 			} else if value.Valid {
-				_m.Status = value.String
+				_m.Status = tenant.Status(value.String)
 			}
 		case tenant.FieldBrandName:
 			if value, ok := values[i].(*sql.NullString); !ok {
@@ -187,7 +187,7 @@ func (_m *Tenant) String() string {
 	builder.WriteString(fmt.Sprintf("%v", _m.Type))
 	builder.WriteString(", ")
 	builder.WriteString("status=")
-	builder.WriteString(_m.Status)
+	builder.WriteString(fmt.Sprintf("%v", _m.Status))
 	builder.WriteString(", ")
 	builder.WriteString("brand_name=")
 	builder.WriteString(_m.BrandName)
