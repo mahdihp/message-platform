@@ -7,6 +7,7 @@ import (
 	"errors"
 	"fmt"
 	"message-platform/ent/predicate"
+	"message-platform/ent/tenant"
 	"message-platform/ent/user"
 
 	"entgo.io/ent/dialect/sql"
@@ -45,6 +46,12 @@ func (_u *UserUpdate) SetNillableTenantID(v *int) *UserUpdate {
 // AddTenantID adds value to the "tenant_id" field.
 func (_u *UserUpdate) AddTenantID(v int) *UserUpdate {
 	_u.mutation.AddTenantID(v)
+	return _u
+}
+
+// ClearTenantID clears the value of the "tenant_id" field.
+func (_u *UserUpdate) ClearTenantID() *UserUpdate {
+	_u.mutation.ClearTenantID()
 	return _u
 }
 
@@ -146,9 +153,26 @@ func (_u *UserUpdate) SetNillableStatus2(v *bool) *UserUpdate {
 	return _u
 }
 
+// SetTenantID sets the "tenant" edge to the Tenant entity by ID.
+func (_u *UserUpdate) SetTenantID(id int) *UserUpdate {
+	_u.mutation.SetTenantID(id)
+	return _u
+}
+
+// SetTenant sets the "tenant" edge to the Tenant entity.
+func (_u *UserUpdate) SetTenant(v *Tenant) *UserUpdate {
+	return _u.SetTenantID(v.ID)
+}
+
 // Mutation returns the UserMutation object of the builder.
 func (_u *UserUpdate) Mutation() *UserMutation {
 	return _u.mutation
+}
+
+// ClearTenant clears the "tenant" edge to the Tenant entity.
+func (_u *UserUpdate) ClearTenant() *UserUpdate {
+	_u.mutation.ClearTenant()
+	return _u
 }
 
 // Save executes the query and returns the number of nodes affected by the update operation.
@@ -200,6 +224,9 @@ func (_u *UserUpdate) check() error {
 			return &ValidationError{Name: "email", err: fmt.Errorf(`ent: validator failed for field "User.email": %w`, err)}
 		}
 	}
+	if _u.mutation.TenantCleared() && len(_u.mutation.TenantIDs()) > 0 {
+		return errors.New(`ent: clearing a required unique edge "User.tenant"`)
+	}
 	return nil
 }
 
@@ -221,6 +248,9 @@ func (_u *UserUpdate) sqlSave(ctx context.Context) (_node int, err error) {
 	if value, ok := _u.mutation.AddedTenantID(); ok {
 		_spec.AddField(user.FieldTenantID, field.TypeInt, value)
 	}
+	if _u.mutation.TenantIDCleared() {
+		_spec.ClearField(user.FieldTenantID, field.TypeInt)
+	}
 	if value, ok := _u.mutation.FirstName(); ok {
 		_spec.SetField(user.FieldFirstName, field.TypeString, value)
 	}
@@ -241,6 +271,35 @@ func (_u *UserUpdate) sqlSave(ctx context.Context) (_node int, err error) {
 	}
 	if value, ok := _u.mutation.Status2(); ok {
 		_spec.SetField(user.FieldStatus2, field.TypeBool, value)
+	}
+	if _u.mutation.TenantCleared() {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.M2O,
+			Inverse: true,
+			Table:   user.TenantTable,
+			Columns: []string{user.TenantColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(tenant.FieldID, field.TypeInt),
+			},
+		}
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
+	if nodes := _u.mutation.TenantIDs(); len(nodes) > 0 {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.M2O,
+			Inverse: true,
+			Table:   user.TenantTable,
+			Columns: []string{user.TenantColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(tenant.FieldID, field.TypeInt),
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges.Add = append(_spec.Edges.Add, edge)
 	}
 	if _node, err = sqlgraph.UpdateNodes(ctx, _u.driver, _spec); err != nil {
 		if _, ok := err.(*sqlgraph.NotFoundError); ok {
@@ -280,6 +339,12 @@ func (_u *UserUpdateOne) SetNillableTenantID(v *int) *UserUpdateOne {
 // AddTenantID adds value to the "tenant_id" field.
 func (_u *UserUpdateOne) AddTenantID(v int) *UserUpdateOne {
 	_u.mutation.AddTenantID(v)
+	return _u
+}
+
+// ClearTenantID clears the value of the "tenant_id" field.
+func (_u *UserUpdateOne) ClearTenantID() *UserUpdateOne {
+	_u.mutation.ClearTenantID()
 	return _u
 }
 
@@ -381,9 +446,26 @@ func (_u *UserUpdateOne) SetNillableStatus2(v *bool) *UserUpdateOne {
 	return _u
 }
 
+// SetTenantID sets the "tenant" edge to the Tenant entity by ID.
+func (_u *UserUpdateOne) SetTenantID(id int) *UserUpdateOne {
+	_u.mutation.SetTenantID(id)
+	return _u
+}
+
+// SetTenant sets the "tenant" edge to the Tenant entity.
+func (_u *UserUpdateOne) SetTenant(v *Tenant) *UserUpdateOne {
+	return _u.SetTenantID(v.ID)
+}
+
 // Mutation returns the UserMutation object of the builder.
 func (_u *UserUpdateOne) Mutation() *UserMutation {
 	return _u.mutation
+}
+
+// ClearTenant clears the "tenant" edge to the Tenant entity.
+func (_u *UserUpdateOne) ClearTenant() *UserUpdateOne {
+	_u.mutation.ClearTenant()
+	return _u
 }
 
 // Where appends a list predicates to the UserUpdate builder.
@@ -448,6 +530,9 @@ func (_u *UserUpdateOne) check() error {
 			return &ValidationError{Name: "email", err: fmt.Errorf(`ent: validator failed for field "User.email": %w`, err)}
 		}
 	}
+	if _u.mutation.TenantCleared() && len(_u.mutation.TenantIDs()) > 0 {
+		return errors.New(`ent: clearing a required unique edge "User.tenant"`)
+	}
 	return nil
 }
 
@@ -486,6 +571,9 @@ func (_u *UserUpdateOne) sqlSave(ctx context.Context) (_node *User, err error) {
 	if value, ok := _u.mutation.AddedTenantID(); ok {
 		_spec.AddField(user.FieldTenantID, field.TypeInt, value)
 	}
+	if _u.mutation.TenantIDCleared() {
+		_spec.ClearField(user.FieldTenantID, field.TypeInt)
+	}
 	if value, ok := _u.mutation.FirstName(); ok {
 		_spec.SetField(user.FieldFirstName, field.TypeString, value)
 	}
@@ -506,6 +594,35 @@ func (_u *UserUpdateOne) sqlSave(ctx context.Context) (_node *User, err error) {
 	}
 	if value, ok := _u.mutation.Status2(); ok {
 		_spec.SetField(user.FieldStatus2, field.TypeBool, value)
+	}
+	if _u.mutation.TenantCleared() {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.M2O,
+			Inverse: true,
+			Table:   user.TenantTable,
+			Columns: []string{user.TenantColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(tenant.FieldID, field.TypeInt),
+			},
+		}
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
+	if nodes := _u.mutation.TenantIDs(); len(nodes) > 0 {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.M2O,
+			Inverse: true,
+			Table:   user.TenantTable,
+			Columns: []string{user.TenantColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(tenant.FieldID, field.TypeInt),
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges.Add = append(_spec.Edges.Add, edge)
 	}
 	_node = &User{config: _u.config}
 	_spec.Assign = _node.assignValues

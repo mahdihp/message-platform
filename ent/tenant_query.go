@@ -9,6 +9,7 @@ import (
 	"math"
 	"message-platform/ent/predicate"
 	"message-platform/ent/tenant"
+	"message-platform/ent/user"
 
 	"entgo.io/ent"
 	"entgo.io/ent/dialect/sql"
@@ -25,6 +26,7 @@ type TenantQuery struct {
 	predicates   []predicate.Tenant
 	withParent   *TenantQuery
 	withChildren *TenantQuery
+	withUsers    *UserQuery
 	// intermediate query (i.e. traversal path).
 	sql  *sql.Selector
 	path func(context.Context) (*sql.Selector, error)
@@ -98,6 +100,28 @@ func (_q *TenantQuery) QueryChildren() *TenantQuery {
 			sqlgraph.From(tenant.Table, tenant.FieldID, selector),
 			sqlgraph.To(tenant.Table, tenant.FieldID),
 			sqlgraph.Edge(sqlgraph.O2M, false, tenant.ChildrenTable, tenant.ChildrenColumn),
+		)
+		fromU = sqlgraph.SetNeighbors(_q.driver.Dialect(), step)
+		return fromU, nil
+	}
+	return query
+}
+
+// QueryUsers chains the current query on the "users" edge.
+func (_q *TenantQuery) QueryUsers() *UserQuery {
+	query := (&UserClient{config: _q.config}).Query()
+	query.path = func(ctx context.Context) (fromU *sql.Selector, err error) {
+		if err := _q.prepareQuery(ctx); err != nil {
+			return nil, err
+		}
+		selector := _q.sqlQuery(ctx)
+		if err := selector.Err(); err != nil {
+			return nil, err
+		}
+		step := sqlgraph.NewStep(
+			sqlgraph.From(tenant.Table, tenant.FieldID, selector),
+			sqlgraph.To(user.Table, user.FieldID),
+			sqlgraph.Edge(sqlgraph.O2M, false, tenant.UsersTable, tenant.UsersColumn),
 		)
 		fromU = sqlgraph.SetNeighbors(_q.driver.Dialect(), step)
 		return fromU, nil
@@ -299,6 +323,7 @@ func (_q *TenantQuery) Clone() *TenantQuery {
 		predicates:   append([]predicate.Tenant{}, _q.predicates...),
 		withParent:   _q.withParent.Clone(),
 		withChildren: _q.withChildren.Clone(),
+		withUsers:    _q.withUsers.Clone(),
 		// clone intermediate query.
 		sql:  _q.sql.Clone(),
 		path: _q.path,
@@ -324,6 +349,17 @@ func (_q *TenantQuery) WithChildren(opts ...func(*TenantQuery)) *TenantQuery {
 		opt(query)
 	}
 	_q.withChildren = query
+	return _q
+}
+
+// WithUsers tells the query-builder to eager-load the nodes that are connected to
+// the "users" edge. The optional arguments are used to configure the query builder of the edge.
+func (_q *TenantQuery) WithUsers(opts ...func(*UserQuery)) *TenantQuery {
+	query := (&UserClient{config: _q.config}).Query()
+	for _, opt := range opts {
+		opt(query)
+	}
+	_q.withUsers = query
 	return _q
 }
 
@@ -405,9 +441,10 @@ func (_q *TenantQuery) sqlAll(ctx context.Context, hooks ...queryHook) ([]*Tenan
 	var (
 		nodes       = []*Tenant{}
 		_spec       = _q.querySpec()
-		loadedTypes = [2]bool{
+		loadedTypes = [3]bool{
 			_q.withParent != nil,
 			_q.withChildren != nil,
+			_q.withUsers != nil,
 		}
 	)
 	_spec.ScanValues = func(columns []string) ([]any, error) {
@@ -438,6 +475,13 @@ func (_q *TenantQuery) sqlAll(ctx context.Context, hooks ...queryHook) ([]*Tenan
 		if err := _q.loadChildren(ctx, query, nodes,
 			func(n *Tenant) { n.Edges.Children = []*Tenant{} },
 			func(n *Tenant, e *Tenant) { n.Edges.Children = append(n.Edges.Children, e) }); err != nil {
+			return nil, err
+		}
+	}
+	if query := _q.withUsers; query != nil {
+		if err := _q.loadUsers(ctx, query, nodes,
+			func(n *Tenant) { n.Edges.Users = []*User{} },
+			func(n *Tenant, e *User) { n.Edges.Users = append(n.Edges.Users, e) }); err != nil {
 			return nil, err
 		}
 	}
@@ -498,6 +542,37 @@ func (_q *TenantQuery) loadChildren(ctx context.Context, query *TenantQuery, nod
 		node, ok := nodeids[fk]
 		if !ok {
 			return fmt.Errorf(`unexpected referenced foreign-key "parent_id" returned %v for node %v`, fk, n.ID)
+		}
+		assign(node, n)
+	}
+	return nil
+}
+func (_q *TenantQuery) loadUsers(ctx context.Context, query *UserQuery, nodes []*Tenant, init func(*Tenant), assign func(*Tenant, *User)) error {
+	fks := make([]driver.Value, 0, len(nodes))
+	nodeids := make(map[int]*Tenant)
+	for i := range nodes {
+		fks = append(fks, nodes[i].ID)
+		nodeids[nodes[i].ID] = nodes[i]
+		if init != nil {
+			init(nodes[i])
+		}
+	}
+	query.withFKs = true
+	query.Where(predicate.User(func(s *sql.Selector) {
+		s.Where(sql.InValues(s.C(tenant.UsersColumn), fks...))
+	}))
+	neighbors, err := query.All(ctx)
+	if err != nil {
+		return err
+	}
+	for _, n := range neighbors {
+		fk := n.tenant_users
+		if fk == nil {
+			return fmt.Errorf(`foreign-key "tenant_users" is nil for node %v`, n.ID)
+		}
+		node, ok := nodeids[*fk]
+		if !ok {
+			return fmt.Errorf(`unexpected referenced foreign-key "tenant_users" returned %v for node %v`, *fk, n.ID)
 		}
 		assign(node, n)
 	}

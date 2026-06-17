@@ -2,6 +2,7 @@ package main
 
 import (
 	"context"
+	"fmt"
 	"log"
 	"message-platform/ent"
 
@@ -18,4 +19,6 @@ func main() {
 	if err := client.Schema.Create(context.Background()); err != nil {
 		log.Fatalf("failed creating schema resources: %v", err)
 	}
+
+	fmt.Println("wwwwwwww")
 }

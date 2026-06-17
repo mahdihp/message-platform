@@ -7,6 +7,7 @@ import (
 	"fmt"
 	"math"
 	"message-platform/ent/predicate"
+	"message-platform/ent/tenant"
 	"message-platform/ent/user"
 
 	"entgo.io/ent"
@@ -22,6 +23,8 @@ type UserQuery struct {
 	order      []user.OrderOption
 	inters     []Interceptor
 	predicates []predicate.User
+	withTenant *TenantQuery
+	withFKs    bool
 	// intermediate query (i.e. traversal path).
 	sql  *sql.Selector
 	path func(context.Context) (*sql.Selector, error)
@@ -56,6 +59,28 @@ func (_q *UserQuery) Unique(unique bool) *UserQuery {
 func (_q *UserQuery) Order(o ...user.OrderOption) *UserQuery {
 	_q.order = append(_q.order, o...)
 	return _q
+}
+
+// QueryTenant chains the current query on the "tenant" edge.
+func (_q *UserQuery) QueryTenant() *TenantQuery {
+	query := (&TenantClient{config: _q.config}).Query()
+	query.path = func(ctx context.Context) (fromU *sql.Selector, err error) {
+		if err := _q.prepareQuery(ctx); err != nil {
+			return nil, err
+		}
+		selector := _q.sqlQuery(ctx)
+		if err := selector.Err(); err != nil {
+			return nil, err
+		}
+		step := sqlgraph.NewStep(
+			sqlgraph.From(user.Table, user.FieldID, selector),
+			sqlgraph.To(tenant.Table, tenant.FieldID),
+			sqlgraph.Edge(sqlgraph.M2O, true, user.TenantTable, user.TenantColumn),
+		)
+		fromU = sqlgraph.SetNeighbors(_q.driver.Dialect(), step)
+		return fromU, nil
+	}
+	return query
 }
 
 // First returns the first User entity from the query.
@@ -250,10 +275,22 @@ func (_q *UserQuery) Clone() *UserQuery {
 		order:      append([]user.OrderOption{}, _q.order...),
 		inters:     append([]Interceptor{}, _q.inters...),
 		predicates: append([]predicate.User{}, _q.predicates...),
+		withTenant: _q.withTenant.Clone(),
 		// clone intermediate query.
 		sql:  _q.sql.Clone(),
 		path: _q.path,
 	}
+}
+
+// WithTenant tells the query-builder to eager-load the nodes that are connected to
+// the "tenant" edge. The optional arguments are used to configure the query builder of the edge.
+func (_q *UserQuery) WithTenant(opts ...func(*TenantQuery)) *UserQuery {
+	query := (&TenantClient{config: _q.config}).Query()
+	for _, opt := range opts {
+		opt(query)
+	}
+	_q.withTenant = query
+	return _q
 }
 
 // GroupBy is used to group vertices by one or more fields/columns.
@@ -332,15 +369,26 @@ func (_q *UserQuery) prepareQuery(ctx context.Context) error {
 
 func (_q *UserQuery) sqlAll(ctx context.Context, hooks ...queryHook) ([]*User, error) {
 	var (
-		nodes = []*User{}
-		_spec = _q.querySpec()
+		nodes       = []*User{}
+		withFKs     = _q.withFKs
+		_spec       = _q.querySpec()
+		loadedTypes = [1]bool{
+			_q.withTenant != nil,
+		}
 	)
+	if _q.withTenant != nil {
+		withFKs = true
+	}
+	if withFKs {
+		_spec.Node.Columns = append(_spec.Node.Columns, user.ForeignKeys...)
+	}
 	_spec.ScanValues = func(columns []string) ([]any, error) {
 		return (*User).scanValues(nil, columns)
 	}
 	_spec.Assign = func(columns []string, values []any) error {
 		node := &User{config: _q.config}
 		nodes = append(nodes, node)
+		node.Edges.loadedTypes = loadedTypes
 		return node.assignValues(columns, values)
 	}
 	for i := range hooks {
@@ -352,7 +400,46 @@ func (_q *UserQuery) sqlAll(ctx context.Context, hooks ...queryHook) ([]*User, e
 	if len(nodes) == 0 {
 		return nodes, nil
 	}
+	if query := _q.withTenant; query != nil {
+		if err := _q.loadTenant(ctx, query, nodes, nil,
+			func(n *User, e *Tenant) { n.Edges.Tenant = e }); err != nil {
+			return nil, err
+		}
+	}
 	return nodes, nil
+}
+
+func (_q *UserQuery) loadTenant(ctx context.Context, query *TenantQuery, nodes []*User, init func(*User), assign func(*User, *Tenant)) error {
+	ids := make([]int, 0, len(nodes))
+	nodeids := make(map[int][]*User)
+	for i := range nodes {
+		if nodes[i].tenant_users == nil {
+			continue
+		}
+		fk := *nodes[i].tenant_users
+		if _, ok := nodeids[fk]; !ok {
+			ids = append(ids, fk)
+		}
+		nodeids[fk] = append(nodeids[fk], nodes[i])
+	}
+	if len(ids) == 0 {
+		return nil
+	}
+	query.Where(tenant.IDIn(ids...))
+	neighbors, err := query.All(ctx)
+	if err != nil {
+		return err
+	}
+	for _, n := range neighbors {
+		nodes, ok := nodeids[n.ID]
+		if !ok {
+			return fmt.Errorf(`unexpected foreign-key "tenant_users" returned %v`, n.ID)
+		}
+		for i := range nodes {
+			assign(nodes[i], n)
+		}
+	}
+	return nil
 }
 
 func (_q *UserQuery) sqlCount(ctx context.Context) (int, error) {

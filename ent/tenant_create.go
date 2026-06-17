@@ -7,6 +7,7 @@ import (
 	"errors"
 	"fmt"
 	"message-platform/ent/tenant"
+	"message-platform/ent/user"
 
 	"entgo.io/ent/dialect/sql/sqlgraph"
 	"entgo.io/ent/schema/field"
@@ -119,6 +120,21 @@ func (_c *TenantCreate) AddChildren(v ...*Tenant) *TenantCreate {
 		ids[i] = v[i].ID
 	}
 	return _c.AddChildIDs(ids...)
+}
+
+// AddUserIDs adds the "users" edge to the User entity by IDs.
+func (_c *TenantCreate) AddUserIDs(ids ...int64) *TenantCreate {
+	_c.mutation.AddUserIDs(ids...)
+	return _c
+}
+
+// AddUsers adds the "users" edges to the User entity.
+func (_c *TenantCreate) AddUsers(v ...*User) *TenantCreate {
+	ids := make([]int64, len(v))
+	for i := range v {
+		ids[i] = v[i].ID
+	}
+	return _c.AddUserIDs(ids...)
 }
 
 // Mutation returns the TenantMutation object of the builder.
@@ -280,6 +296,22 @@ func (_c *TenantCreate) createSpec() (*Tenant, *sqlgraph.CreateSpec) {
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
 				IDSpec: sqlgraph.NewFieldSpec(tenant.FieldID, field.TypeInt),
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges = append(_spec.Edges, edge)
+	}
+	if nodes := _c.mutation.UsersIDs(); len(nodes) > 0 {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: false,
+			Table:   tenant.UsersTable,
+			Columns: []string{tenant.UsersColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(user.FieldID, field.TypeInt64),
 			},
 		}
 		for _, k := range nodes {

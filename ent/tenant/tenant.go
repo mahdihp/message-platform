@@ -30,6 +30,8 @@ const (
 	EdgeParent = "parent"
 	// EdgeChildren holds the string denoting the children edge name in mutations.
 	EdgeChildren = "children"
+	// EdgeUsers holds the string denoting the users edge name in mutations.
+	EdgeUsers = "users"
 	// Table holds the table name of the tenant in the database.
 	Table = "tenants"
 	// ParentTable is the table that holds the parent relation/edge.
@@ -40,6 +42,13 @@ const (
 	ChildrenTable = "tenants"
 	// ChildrenColumn is the table column denoting the children relation/edge.
 	ChildrenColumn = "parent_id"
+	// UsersTable is the table that holds the users relation/edge.
+	UsersTable = "users"
+	// UsersInverseTable is the table name for the User entity.
+	// It exists in this package in order to avoid circular dependency with the "user" package.
+	UsersInverseTable = "users"
+	// UsersColumn is the table column denoting the users relation/edge.
+	UsersColumn = "tenant_users"
 )
 
 // Columns holds all SQL columns for tenant fields.
@@ -185,6 +194,20 @@ func ByChildren(term sql.OrderTerm, terms ...sql.OrderTerm) OrderOption {
 		sqlgraph.OrderByNeighborTerms(s, newChildrenStep(), append([]sql.OrderTerm{term}, terms...)...)
 	}
 }
+
+// ByUsersCount orders the results by users count.
+func ByUsersCount(opts ...sql.OrderTermOption) OrderOption {
+	return func(s *sql.Selector) {
+		sqlgraph.OrderByNeighborsCount(s, newUsersStep(), opts...)
+	}
+}
+
+// ByUsers orders the results by users terms.
+func ByUsers(term sql.OrderTerm, terms ...sql.OrderTerm) OrderOption {
+	return func(s *sql.Selector) {
+		sqlgraph.OrderByNeighborTerms(s, newUsersStep(), append([]sql.OrderTerm{term}, terms...)...)
+	}
+}
 func newParentStep() *sqlgraph.Step {
 	return sqlgraph.NewStep(
 		sqlgraph.From(Table, FieldID),
@@ -197,5 +220,12 @@ func newChildrenStep() *sqlgraph.Step {
 		sqlgraph.From(Table, FieldID),
 		sqlgraph.To(Table, FieldID),
 		sqlgraph.Edge(sqlgraph.O2M, false, ChildrenTable, ChildrenColumn),
+	)
+}
+func newUsersStep() *sqlgraph.Step {
+	return sqlgraph.NewStep(
+		sqlgraph.From(Table, FieldID),
+		sqlgraph.To(UsersInverseTable, FieldID),
+		sqlgraph.Edge(sqlgraph.O2M, false, UsersTable, UsersColumn),
 	)
 }

@@ -6,6 +6,7 @@ import (
 	"context"
 	"errors"
 	"fmt"
+	"message-platform/ent/tenant"
 	"message-platform/ent/user"
 
 	"entgo.io/ent/dialect/sql/sqlgraph"
@@ -22,6 +23,14 @@ type UserCreate struct {
 // SetTenantID sets the "tenant_id" field.
 func (_c *UserCreate) SetTenantID(v int) *UserCreate {
 	_c.mutation.SetTenantID(v)
+	return _c
+}
+
+// SetNillableTenantID sets the "tenant_id" field if the given value is not nil.
+func (_c *UserCreate) SetNillableTenantID(v *int) *UserCreate {
+	if v != nil {
+		_c.SetTenantID(*v)
+	}
 	return _c
 }
 
@@ -73,6 +82,17 @@ func (_c *UserCreate) SetID(v int64) *UserCreate {
 	return _c
 }
 
+// SetTenantID sets the "tenant" edge to the Tenant entity by ID.
+func (_c *UserCreate) SetTenantID(id int) *UserCreate {
+	_c.mutation.SetTenantID(id)
+	return _c
+}
+
+// SetTenant sets the "tenant" edge to the Tenant entity.
+func (_c *UserCreate) SetTenant(v *Tenant) *UserCreate {
+	return _c.SetTenantID(v.ID)
+}
+
 // Mutation returns the UserMutation object of the builder.
 func (_c *UserCreate) Mutation() *UserMutation {
 	return _c.mutation
@@ -107,9 +127,6 @@ func (_c *UserCreate) ExecX(ctx context.Context) {
 
 // check runs all checks and user-defined validators on the builder.
 func (_c *UserCreate) check() error {
-	if _, ok := _c.mutation.TenantID(); !ok {
-		return &ValidationError{Name: "tenant_id", err: errors.New(`ent: missing required field "User.tenant_id"`)}
-	}
 	if _, ok := _c.mutation.FirstName(); !ok {
 		return &ValidationError{Name: "first_name", err: errors.New(`ent: missing required field "User.first_name"`)}
 	}
@@ -150,6 +167,9 @@ func (_c *UserCreate) check() error {
 	}
 	if _, ok := _c.mutation.Status2(); !ok {
 		return &ValidationError{Name: "status2", err: errors.New(`ent: missing required field "User.status2"`)}
+	}
+	if len(_c.mutation.TenantIDs()) == 0 {
+		return &ValidationError{Name: "tenant", err: errors.New(`ent: missing required edge "User.tenant"`)}
 	}
 	return nil
 }
@@ -214,6 +234,23 @@ func (_c *UserCreate) createSpec() (*User, *sqlgraph.CreateSpec) {
 	if value, ok := _c.mutation.Status2(); ok {
 		_spec.SetField(user.FieldStatus2, field.TypeBool, value)
 		_node.Status2 = value
+	}
+	if nodes := _c.mutation.TenantIDs(); len(nodes) > 0 {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.M2O,
+			Inverse: true,
+			Table:   user.TenantTable,
+			Columns: []string{user.TenantColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(tenant.FieldID, field.TypeInt),
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_node.tenant_users = &nodes[0]
+		_spec.Edges = append(_spec.Edges, edge)
 	}
 	return _node, _spec
 }

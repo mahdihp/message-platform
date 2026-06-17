@@ -29,7 +29,7 @@ func (Tenant) Fields() []ent.Field {
 // Edges of the Tenant.
 func (Tenant) Edges() []ent.Edge {
 	return []ent.Edge{
-		edge.To("children", Tenant.Type).
-			From("parent").Unique().Field("parent_id"),
+		edge.To("children", Tenant.Type).From("parent").Unique().Field("parent_id"),
+		edge.To("users", User.Type),
 	}
 }

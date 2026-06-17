@@ -4,6 +4,7 @@ package ent
 
 import (
 	"fmt"
+	"message-platform/ent/tenant"
 	"message-platform/ent/user"
 	"strings"
 
@@ -31,8 +32,32 @@ type User struct {
 	// Status holds the value of the "status" field.
 	Status bool `json:"status,omitempty"`
 	// Status2 holds the value of the "status2" field.
-	Status2      bool `json:"status2,omitempty"`
+	Status2 bool `json:"status2,omitempty"`
+	// Edges holds the relations/edges for other nodes in the graph.
+	// The values are being populated by the UserQuery when eager-loading is set.
+	Edges        UserEdges `json:"edges"`
+	tenant_users *int
 	selectValues sql.SelectValues
+}
+
+// UserEdges holds the relations/edges for other nodes in the graph.
+type UserEdges struct {
+	// Tenant holds the value of the tenant edge.
+	Tenant *Tenant `json:"tenant,omitempty"`
+	// loadedTypes holds the information for reporting if a
+	// type was loaded (or requested) in eager-loading or not.
+	loadedTypes [1]bool
+}
+
+// TenantOrErr returns the Tenant value or an error if the edge
+// was not loaded in eager-loading, or loaded but was not found.
+func (e UserEdges) TenantOrErr() (*Tenant, error) {
+	if e.Tenant != nil {
+		return e.Tenant, nil
+	} else if e.loadedTypes[0] {
+		return nil, &NotFoundError{label: tenant.Label}
+	}
+	return nil, &NotLoadedError{edge: "tenant"}
 }
 
 // scanValues returns the types for scanning values from sql.Rows.
@@ -46,6 +71,8 @@ func (*User) scanValues(columns []string) ([]any, error) {
 			values[i] = new(sql.NullInt64)
 		case user.FieldFirstName, user.FieldLastName, user.FieldMobile, user.FieldEmail, user.FieldPasswordHash:
 			values[i] = new(sql.NullString)
+		case user.ForeignKeys[0]: // tenant_users
+			values[i] = new(sql.NullInt64)
 		default:
 			values[i] = new(sql.UnknownType)
 		}
@@ -115,6 +142,13 @@ func (_m *User) assignValues(columns []string, values []any) error {
 			} else if value.Valid {
 				_m.Status2 = value.Bool
 			}
+		case user.ForeignKeys[0]:
+			if value, ok := values[i].(*sql.NullInt64); !ok {
+				return fmt.Errorf("unexpected type %T for edge-field tenant_users", value)
+			} else if value.Valid {
+				_m.tenant_users = new(int)
+				*_m.tenant_users = int(value.Int64)
+			}
 		default:
 			_m.selectValues.Set(columns[i], values[i])
 		}
@@ -126,6 +160,11 @@ func (_m *User) assignValues(columns []string, values []any) error {
 // This includes values selected through modifiers, order, etc.
 func (_m *User) Value(name string) (ent.Value, error) {
 	return _m.selectValues.Get(name)
+}
+
+// QueryTenant queries the "tenant" edge of the User entity.
+func (_m *User) QueryTenant() *TenantQuery {
+	return NewUserClient(_m.config).QueryTenant(_m)
 }
 
 // Update returns a builder for updating this User.

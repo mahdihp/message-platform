@@ -35,7 +35,7 @@ var (
 	// UsersColumns holds the columns for the "users" table.
 	UsersColumns = []*schema.Column{
 		{Name: "id", Type: field.TypeInt64, Increment: true},
-		{Name: "tenant_id", Type: field.TypeInt},
+		{Name: "tenant_id", Type: field.TypeInt, Nullable: true},
 		{Name: "first_name", Type: field.TypeString, Size: 50},
 		{Name: "last_name", Type: field.TypeString, Size: 50},
 		{Name: "mobile", Type: field.TypeString, Size: 11},
@@ -43,12 +43,21 @@ var (
 		{Name: "password_hash", Type: field.TypeString},
 		{Name: "status", Type: field.TypeBool},
 		{Name: "status2", Type: field.TypeBool},
+		{Name: "tenant_users", Type: field.TypeInt},
 	}
 	// UsersTable holds the schema information for the "users" table.
 	UsersTable = &schema.Table{
 		Name:       "users",
 		Columns:    UsersColumns,
 		PrimaryKey: []*schema.Column{UsersColumns[0]},
+		ForeignKeys: []*schema.ForeignKey{
+			{
+				Symbol:     "users_tenants_users",
+				Columns:    []*schema.Column{UsersColumns[9]},
+				RefColumns: []*schema.Column{TenantsColumns[0]},
+				OnDelete:   schema.NoAction,
+			},
+		},
 	}
 	// Tables holds all the tables in the schema.
 	Tables = []*schema.Table{
@@ -59,4 +68,5 @@ var (
 
 func init() {
 	TenantsTable.ForeignKeys[0].RefTable = TenantsTable
+	UsersTable.ForeignKeys[0].RefTable = TenantsTable
 }

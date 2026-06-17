@@ -6,6 +6,7 @@ import (
 	"message-platform/ent/predicate"
 
 	"entgo.io/ent/dialect/sql"
+	"entgo.io/ent/dialect/sql/sqlgraph"
 )
 
 // ID filters vertices based on their ID field.
@@ -131,6 +132,16 @@ func TenantIDLT(v int) predicate.User {
 // TenantIDLTE applies the LTE predicate on the "tenant_id" field.
 func TenantIDLTE(v int) predicate.User {
 	return predicate.User(sql.FieldLTE(FieldTenantID, v))
+}
+
+// TenantIDIsNil applies the IsNil predicate on the "tenant_id" field.
+func TenantIDIsNil() predicate.User {
+	return predicate.User(sql.FieldIsNull(FieldTenantID))
+}
+
+// TenantIDNotNil applies the NotNil predicate on the "tenant_id" field.
+func TenantIDNotNil() predicate.User {
+	return predicate.User(sql.FieldNotNull(FieldTenantID))
 }
 
 // FirstNameEQ applies the EQ predicate on the "first_name" field.
@@ -476,6 +487,29 @@ func Status2EQ(v bool) predicate.User {
 // Status2NEQ applies the NEQ predicate on the "status2" field.
 func Status2NEQ(v bool) predicate.User {
 	return predicate.User(sql.FieldNEQ(FieldStatus2, v))
+}
+
+// HasTenant applies the HasEdge predicate on the "tenant" edge.
+func HasTenant() predicate.User {
+	return predicate.User(func(s *sql.Selector) {
+		step := sqlgraph.NewStep(
+			sqlgraph.From(Table, FieldID),
+			sqlgraph.Edge(sqlgraph.M2O, true, TenantTable, TenantColumn),
+		)
+		sqlgraph.HasNeighbors(s, step)
+	})
+}
+
+// HasTenantWith applies the HasEdge predicate on the "tenant" edge with a given conditions (other predicates).
+func HasTenantWith(preds ...predicate.Tenant) predicate.User {
+	return predicate.User(func(s *sql.Selector) {
+		step := newTenantStep()
+		sqlgraph.HasNeighborsWith(s, step, func(s *sql.Selector) {
+			for _, p := range preds {
+				p(s)
+			}
+		})
+	})
 }
 
 // And groups predicates with the AND operator between them.

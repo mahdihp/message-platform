@@ -4,6 +4,7 @@ package user
 
 import (
 	"entgo.io/ent/dialect/sql"
+	"entgo.io/ent/dialect/sql/sqlgraph"
 )
 
 const (
@@ -27,8 +28,17 @@ const (
 	FieldStatus = "status"
 	// FieldStatus2 holds the string denoting the status2 field in the database.
 	FieldStatus2 = "status2"
+	// EdgeTenant holds the string denoting the tenant edge name in mutations.
+	EdgeTenant = "tenant"
 	// Table holds the table name of the user in the database.
 	Table = "users"
+	// TenantTable is the table that holds the tenant relation/edge.
+	TenantTable = "users"
+	// TenantInverseTable is the table name for the Tenant entity.
+	// It exists in this package in order to avoid circular dependency with the "tenant" package.
+	TenantInverseTable = "tenants"
+	// TenantColumn is the table column denoting the tenant relation/edge.
+	TenantColumn = "tenant_users"
 )
 
 // Columns holds all SQL columns for user fields.
@@ -44,10 +54,21 @@ var Columns = []string{
 	FieldStatus2,
 }
 
+// ForeignKeys holds the SQL foreign-keys that are owned by the "users"
+// table and are not defined as standalone fields in the schema.
+var ForeignKeys = []string{
+	"tenant_users",
+}
+
 // ValidColumn reports if the column name is valid (part of the table columns).
 func ValidColumn(column string) bool {
 	for i := range Columns {
 		if column == Columns[i] {
+			return true
+		}
+	}
+	for i := range ForeignKeys {
+		if column == ForeignKeys[i] {
 			return true
 		}
 	}
@@ -111,4 +132,18 @@ func ByStatus(opts ...sql.OrderTermOption) OrderOption {
 // ByStatus2 orders the results by the status2 field.
 func ByStatus2(opts ...sql.OrderTermOption) OrderOption {
 	return sql.OrderByField(FieldStatus2, opts...).ToFunc()
+}
+
+// ByTenantField orders the results by tenant field.
+func ByTenantField(field string, opts ...sql.OrderTermOption) OrderOption {
+	return func(s *sql.Selector) {
+		sqlgraph.OrderByNeighborTerms(s, newTenantStep(), sql.OrderByField(field, opts...))
+	}
+}
+func newTenantStep() *sqlgraph.Step {
+	return sqlgraph.NewStep(
+		sqlgraph.From(Table, FieldID),
+		sqlgraph.To(TenantInverseTable, FieldID),
+		sqlgraph.Edge(sqlgraph.M2O, true, TenantTable, TenantColumn),
+	)
 }

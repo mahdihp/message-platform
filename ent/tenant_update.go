@@ -8,6 +8,7 @@ import (
 	"fmt"
 	"message-platform/ent/predicate"
 	"message-platform/ent/tenant"
+	"message-platform/ent/user"
 
 	"entgo.io/ent/dialect/sql"
 	"entgo.io/ent/dialect/sql/sqlgraph"
@@ -149,6 +150,21 @@ func (_u *TenantUpdate) AddChildren(v ...*Tenant) *TenantUpdate {
 	return _u.AddChildIDs(ids...)
 }
 
+// AddUserIDs adds the "users" edge to the User entity by IDs.
+func (_u *TenantUpdate) AddUserIDs(ids ...int64) *TenantUpdate {
+	_u.mutation.AddUserIDs(ids...)
+	return _u
+}
+
+// AddUsers adds the "users" edges to the User entity.
+func (_u *TenantUpdate) AddUsers(v ...*User) *TenantUpdate {
+	ids := make([]int64, len(v))
+	for i := range v {
+		ids[i] = v[i].ID
+	}
+	return _u.AddUserIDs(ids...)
+}
+
 // Mutation returns the TenantMutation object of the builder.
 func (_u *TenantUpdate) Mutation() *TenantMutation {
 	return _u.mutation
@@ -179,6 +195,27 @@ func (_u *TenantUpdate) RemoveChildren(v ...*Tenant) *TenantUpdate {
 		ids[i] = v[i].ID
 	}
 	return _u.RemoveChildIDs(ids...)
+}
+
+// ClearUsers clears all "users" edges to the User entity.
+func (_u *TenantUpdate) ClearUsers() *TenantUpdate {
+	_u.mutation.ClearUsers()
+	return _u
+}
+
+// RemoveUserIDs removes the "users" edge to User entities by IDs.
+func (_u *TenantUpdate) RemoveUserIDs(ids ...int64) *TenantUpdate {
+	_u.mutation.RemoveUserIDs(ids...)
+	return _u
+}
+
+// RemoveUsers removes "users" edges to User entities.
+func (_u *TenantUpdate) RemoveUsers(v ...*User) *TenantUpdate {
+	ids := make([]int64, len(v))
+	for i := range v {
+		ids[i] = v[i].ID
+	}
+	return _u.RemoveUserIDs(ids...)
 }
 
 // Save executes the query and returns the number of nodes affected by the update operation.
@@ -345,6 +382,51 @@ func (_u *TenantUpdate) sqlSave(ctx context.Context) (_node int, err error) {
 		}
 		_spec.Edges.Add = append(_spec.Edges.Add, edge)
 	}
+	if _u.mutation.UsersCleared() {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: false,
+			Table:   tenant.UsersTable,
+			Columns: []string{tenant.UsersColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(user.FieldID, field.TypeInt64),
+			},
+		}
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
+	if nodes := _u.mutation.RemovedUsersIDs(); len(nodes) > 0 && !_u.mutation.UsersCleared() {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: false,
+			Table:   tenant.UsersTable,
+			Columns: []string{tenant.UsersColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(user.FieldID, field.TypeInt64),
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
+	if nodes := _u.mutation.UsersIDs(); len(nodes) > 0 {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: false,
+			Table:   tenant.UsersTable,
+			Columns: []string{tenant.UsersColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(user.FieldID, field.TypeInt64),
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges.Add = append(_spec.Edges.Add, edge)
+	}
 	if _node, err = sqlgraph.UpdateNodes(ctx, _u.driver, _spec); err != nil {
 		if _, ok := err.(*sqlgraph.NotFoundError); ok {
 			err = &NotFoundError{tenant.Label}
@@ -487,6 +569,21 @@ func (_u *TenantUpdateOne) AddChildren(v ...*Tenant) *TenantUpdateOne {
 	return _u.AddChildIDs(ids...)
 }
 
+// AddUserIDs adds the "users" edge to the User entity by IDs.
+func (_u *TenantUpdateOne) AddUserIDs(ids ...int64) *TenantUpdateOne {
+	_u.mutation.AddUserIDs(ids...)
+	return _u
+}
+
+// AddUsers adds the "users" edges to the User entity.
+func (_u *TenantUpdateOne) AddUsers(v ...*User) *TenantUpdateOne {
+	ids := make([]int64, len(v))
+	for i := range v {
+		ids[i] = v[i].ID
+	}
+	return _u.AddUserIDs(ids...)
+}
+
 // Mutation returns the TenantMutation object of the builder.
 func (_u *TenantUpdateOne) Mutation() *TenantMutation {
 	return _u.mutation
@@ -517,6 +614,27 @@ func (_u *TenantUpdateOne) RemoveChildren(v ...*Tenant) *TenantUpdateOne {
 		ids[i] = v[i].ID
 	}
 	return _u.RemoveChildIDs(ids...)
+}
+
+// ClearUsers clears all "users" edges to the User entity.
+func (_u *TenantUpdateOne) ClearUsers() *TenantUpdateOne {
+	_u.mutation.ClearUsers()
+	return _u
+}
+
+// RemoveUserIDs removes the "users" edge to User entities by IDs.
+func (_u *TenantUpdateOne) RemoveUserIDs(ids ...int64) *TenantUpdateOne {
+	_u.mutation.RemoveUserIDs(ids...)
+	return _u
+}
+
+// RemoveUsers removes "users" edges to User entities.
+func (_u *TenantUpdateOne) RemoveUsers(v ...*User) *TenantUpdateOne {
+	ids := make([]int64, len(v))
+	for i := range v {
+		ids[i] = v[i].ID
+	}
+	return _u.RemoveUserIDs(ids...)
 }
 
 // Where appends a list predicates to the TenantUpdate builder.
@@ -706,6 +824,51 @@ func (_u *TenantUpdateOne) sqlSave(ctx context.Context) (_node *Tenant, err erro
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
 				IDSpec: sqlgraph.NewFieldSpec(tenant.FieldID, field.TypeInt),
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges.Add = append(_spec.Edges.Add, edge)
+	}
+	if _u.mutation.UsersCleared() {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: false,
+			Table:   tenant.UsersTable,
+			Columns: []string{tenant.UsersColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(user.FieldID, field.TypeInt64),
+			},
+		}
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
+	if nodes := _u.mutation.RemovedUsersIDs(); len(nodes) > 0 && !_u.mutation.UsersCleared() {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: false,
+			Table:   tenant.UsersTable,
+			Columns: []string{tenant.UsersColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(user.FieldID, field.TypeInt64),
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
+	if nodes := _u.mutation.UsersIDs(); len(nodes) > 0 {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: false,
+			Table:   tenant.UsersTable,
+			Columns: []string{tenant.UsersColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(user.FieldID, field.TypeInt64),
 			},
 		}
 		for _, k := range nodes {
