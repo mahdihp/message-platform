@@ -20,20 +20,6 @@ type UserCreate struct {
 	hooks    []Hook
 }
 
-// SetTenantID sets the "tenant_id" field.
-func (_c *UserCreate) SetTenantID(v int) *UserCreate {
-	_c.mutation.SetTenantID(v)
-	return _c
-}
-
-// SetNillableTenantID sets the "tenant_id" field if the given value is not nil.
-func (_c *UserCreate) SetNillableTenantID(v *int) *UserCreate {
-	if v != nil {
-		_c.SetTenantID(*v)
-	}
-	return _c
-}
-
 // SetFirstName sets the "first_name" field.
 func (_c *UserCreate) SetFirstName(v string) *UserCreate {
 	_c.mutation.SetFirstName(v)
@@ -73,6 +59,12 @@ func (_c *UserCreate) SetStatus(v bool) *UserCreate {
 // SetStatus2 sets the "status2" field.
 func (_c *UserCreate) SetStatus2(v bool) *UserCreate {
 	_c.mutation.SetStatus2(v)
+	return _c
+}
+
+// SetStatus3 sets the "status3" field.
+func (_c *UserCreate) SetStatus3(v bool) *UserCreate {
+	_c.mutation.SetStatus3(v)
 	return _c
 }
 
@@ -168,6 +160,9 @@ func (_c *UserCreate) check() error {
 	if _, ok := _c.mutation.Status2(); !ok {
 		return &ValidationError{Name: "status2", err: errors.New(`ent: missing required field "User.status2"`)}
 	}
+	if _, ok := _c.mutation.Status3(); !ok {
+		return &ValidationError{Name: "status3", err: errors.New(`ent: missing required field "User.status3"`)}
+	}
 	if len(_c.mutation.TenantIDs()) == 0 {
 		return &ValidationError{Name: "tenant", err: errors.New(`ent: missing required edge "User.tenant"`)}
 	}
@@ -203,10 +198,6 @@ func (_c *UserCreate) createSpec() (*User, *sqlgraph.CreateSpec) {
 		_node.ID = id
 		_spec.ID.Value = id
 	}
-	if value, ok := _c.mutation.TenantID(); ok {
-		_spec.SetField(user.FieldTenantID, field.TypeInt, value)
-		_node.TenantID = value
-	}
 	if value, ok := _c.mutation.FirstName(); ok {
 		_spec.SetField(user.FieldFirstName, field.TypeString, value)
 		_node.FirstName = value
@@ -234,6 +225,10 @@ func (_c *UserCreate) createSpec() (*User, *sqlgraph.CreateSpec) {
 	if value, ok := _c.mutation.Status2(); ok {
 		_spec.SetField(user.FieldStatus2, field.TypeBool, value)
 		_node.Status2 = value
+	}
+	if value, ok := _c.mutation.Status3(); ok {
+		_spec.SetField(user.FieldStatus3, field.TypeBool, value)
+		_node.Status3 = value
 	}
 	if nodes := _c.mutation.TenantIDs(); len(nodes) > 0 {
 		edge := &sqlgraph.EdgeSpec{

@@ -29,33 +29,19 @@ func init() {
 	userFields := schema.User{}.Fields()
 	_ = userFields
 	// userDescFirstName is the schema descriptor for first_name field.
-	userDescFirstName := userFields[2].Descriptor()
+	userDescFirstName := userFields[1].Descriptor()
 	// user.FirstNameValidator is a validator for the "first_name" field. It is called by the builders before save.
-	user.FirstNameValidator = func() func(string) error {
-		validators := userDescFirstName.Validators
-		fns := [...]func(string) error{
-			validators[0].(func(string) error),
-			validators[1].(func(string) error),
-		}
-		return func(first_name string) error {
-			for _, fn := range fns {
-				if err := fn(first_name); err != nil {
-					return err
-				}
-			}
-			return nil
-		}
-	}()
+	user.FirstNameValidator = userDescFirstName.Validators[0].(func(string) error)
 	// userDescLastName is the schema descriptor for last_name field.
-	userDescLastName := userFields[3].Descriptor()
+	userDescLastName := userFields[2].Descriptor()
 	// user.LastNameValidator is a validator for the "last_name" field. It is called by the builders before save.
 	user.LastNameValidator = userDescLastName.Validators[0].(func(string) error)
 	// userDescMobile is the schema descriptor for mobile field.
-	userDescMobile := userFields[4].Descriptor()
+	userDescMobile := userFields[3].Descriptor()
 	// user.MobileValidator is a validator for the "mobile" field. It is called by the builders before save.
 	user.MobileValidator = userDescMobile.Validators[0].(func(string) error)
 	// userDescEmail is the schema descriptor for email field.
-	userDescEmail := userFields[5].Descriptor()
+	userDescEmail := userFields[4].Descriptor()
 	// user.EmailValidator is a validator for the "email" field. It is called by the builders before save.
 	user.EmailValidator = userDescEmail.Validators[0].(func(string) error)
 }

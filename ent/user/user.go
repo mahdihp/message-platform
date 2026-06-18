@@ -12,8 +12,6 @@ const (
 	Label = "user"
 	// FieldID holds the string denoting the id field in the database.
 	FieldID = "id"
-	// FieldTenantID holds the string denoting the tenant_id field in the database.
-	FieldTenantID = "tenant_id"
 	// FieldFirstName holds the string denoting the first_name field in the database.
 	FieldFirstName = "first_name"
 	// FieldLastName holds the string denoting the last_name field in the database.
@@ -28,6 +26,8 @@ const (
 	FieldStatus = "status"
 	// FieldStatus2 holds the string denoting the status2 field in the database.
 	FieldStatus2 = "status2"
+	// FieldStatus3 holds the string denoting the status3 field in the database.
+	FieldStatus3 = "status3"
 	// EdgeTenant holds the string denoting the tenant edge name in mutations.
 	EdgeTenant = "tenant"
 	// Table holds the table name of the user in the database.
@@ -44,7 +44,6 @@ const (
 // Columns holds all SQL columns for user fields.
 var Columns = []string{
 	FieldID,
-	FieldTenantID,
 	FieldFirstName,
 	FieldLastName,
 	FieldMobile,
@@ -52,6 +51,7 @@ var Columns = []string{
 	FieldPasswordHash,
 	FieldStatus,
 	FieldStatus2,
+	FieldStatus3,
 }
 
 // ForeignKeys holds the SQL foreign-keys that are owned by the "users"
@@ -94,11 +94,6 @@ func ByID(opts ...sql.OrderTermOption) OrderOption {
 	return sql.OrderByField(FieldID, opts...).ToFunc()
 }
 
-// ByTenantID orders the results by the tenant_id field.
-func ByTenantID(opts ...sql.OrderTermOption) OrderOption {
-	return sql.OrderByField(FieldTenantID, opts...).ToFunc()
-}
-
 // ByFirstName orders the results by the first_name field.
 func ByFirstName(opts ...sql.OrderTermOption) OrderOption {
 	return sql.OrderByField(FieldFirstName, opts...).ToFunc()
@@ -132,6 +127,11 @@ func ByStatus(opts ...sql.OrderTermOption) OrderOption {
 // ByStatus2 orders the results by the status2 field.
 func ByStatus2(opts ...sql.OrderTermOption) OrderOption {
 	return sql.OrderByField(FieldStatus2, opts...).ToFunc()
+}
+
+// ByStatus3 orders the results by the status3 field.
+func ByStatus3(opts ...sql.OrderTermOption) OrderOption {
+	return sql.OrderByField(FieldStatus3, opts...).ToFunc()
 }
 
 // ByTenantField orders the results by tenant field.

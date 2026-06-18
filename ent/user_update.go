@@ -28,33 +28,6 @@ func (_u *UserUpdate) Where(ps ...predicate.User) *UserUpdate {
 	return _u
 }
 
-// SetTenantID sets the "tenant_id" field.
-func (_u *UserUpdate) SetTenantID(v int) *UserUpdate {
-	_u.mutation.ResetTenantID()
-	_u.mutation.SetTenantID(v)
-	return _u
-}
-
-// SetNillableTenantID sets the "tenant_id" field if the given value is not nil.
-func (_u *UserUpdate) SetNillableTenantID(v *int) *UserUpdate {
-	if v != nil {
-		_u.SetTenantID(*v)
-	}
-	return _u
-}
-
-// AddTenantID adds value to the "tenant_id" field.
-func (_u *UserUpdate) AddTenantID(v int) *UserUpdate {
-	_u.mutation.AddTenantID(v)
-	return _u
-}
-
-// ClearTenantID clears the value of the "tenant_id" field.
-func (_u *UserUpdate) ClearTenantID() *UserUpdate {
-	_u.mutation.ClearTenantID()
-	return _u
-}
-
 // SetFirstName sets the "first_name" field.
 func (_u *UserUpdate) SetFirstName(v string) *UserUpdate {
 	_u.mutation.SetFirstName(v)
@@ -153,6 +126,20 @@ func (_u *UserUpdate) SetNillableStatus2(v *bool) *UserUpdate {
 	return _u
 }
 
+// SetStatus3 sets the "status3" field.
+func (_u *UserUpdate) SetStatus3(v bool) *UserUpdate {
+	_u.mutation.SetStatus3(v)
+	return _u
+}
+
+// SetNillableStatus3 sets the "status3" field if the given value is not nil.
+func (_u *UserUpdate) SetNillableStatus3(v *bool) *UserUpdate {
+	if v != nil {
+		_u.SetStatus3(*v)
+	}
+	return _u
+}
+
 // SetTenantID sets the "tenant" edge to the Tenant entity by ID.
 func (_u *UserUpdate) SetTenantID(id int) *UserUpdate {
 	_u.mutation.SetTenantID(id)
@@ -242,15 +229,6 @@ func (_u *UserUpdate) sqlSave(ctx context.Context) (_node int, err error) {
 			}
 		}
 	}
-	if value, ok := _u.mutation.TenantID(); ok {
-		_spec.SetField(user.FieldTenantID, field.TypeInt, value)
-	}
-	if value, ok := _u.mutation.AddedTenantID(); ok {
-		_spec.AddField(user.FieldTenantID, field.TypeInt, value)
-	}
-	if _u.mutation.TenantIDCleared() {
-		_spec.ClearField(user.FieldTenantID, field.TypeInt)
-	}
 	if value, ok := _u.mutation.FirstName(); ok {
 		_spec.SetField(user.FieldFirstName, field.TypeString, value)
 	}
@@ -271,6 +249,9 @@ func (_u *UserUpdate) sqlSave(ctx context.Context) (_node int, err error) {
 	}
 	if value, ok := _u.mutation.Status2(); ok {
 		_spec.SetField(user.FieldStatus2, field.TypeBool, value)
+	}
+	if value, ok := _u.mutation.Status3(); ok {
+		_spec.SetField(user.FieldStatus3, field.TypeBool, value)
 	}
 	if _u.mutation.TenantCleared() {
 		edge := &sqlgraph.EdgeSpec{
@@ -319,33 +300,6 @@ type UserUpdateOne struct {
 	fields   []string
 	hooks    []Hook
 	mutation *UserMutation
-}
-
-// SetTenantID sets the "tenant_id" field.
-func (_u *UserUpdateOne) SetTenantID(v int) *UserUpdateOne {
-	_u.mutation.ResetTenantID()
-	_u.mutation.SetTenantID(v)
-	return _u
-}
-
-// SetNillableTenantID sets the "tenant_id" field if the given value is not nil.
-func (_u *UserUpdateOne) SetNillableTenantID(v *int) *UserUpdateOne {
-	if v != nil {
-		_u.SetTenantID(*v)
-	}
-	return _u
-}
-
-// AddTenantID adds value to the "tenant_id" field.
-func (_u *UserUpdateOne) AddTenantID(v int) *UserUpdateOne {
-	_u.mutation.AddTenantID(v)
-	return _u
-}
-
-// ClearTenantID clears the value of the "tenant_id" field.
-func (_u *UserUpdateOne) ClearTenantID() *UserUpdateOne {
-	_u.mutation.ClearTenantID()
-	return _u
 }
 
 // SetFirstName sets the "first_name" field.
@@ -442,6 +396,20 @@ func (_u *UserUpdateOne) SetStatus2(v bool) *UserUpdateOne {
 func (_u *UserUpdateOne) SetNillableStatus2(v *bool) *UserUpdateOne {
 	if v != nil {
 		_u.SetStatus2(*v)
+	}
+	return _u
+}
+
+// SetStatus3 sets the "status3" field.
+func (_u *UserUpdateOne) SetStatus3(v bool) *UserUpdateOne {
+	_u.mutation.SetStatus3(v)
+	return _u
+}
+
+// SetNillableStatus3 sets the "status3" field if the given value is not nil.
+func (_u *UserUpdateOne) SetNillableStatus3(v *bool) *UserUpdateOne {
+	if v != nil {
+		_u.SetStatus3(*v)
 	}
 	return _u
 }
@@ -565,15 +533,6 @@ func (_u *UserUpdateOne) sqlSave(ctx context.Context) (_node *User, err error) {
 			}
 		}
 	}
-	if value, ok := _u.mutation.TenantID(); ok {
-		_spec.SetField(user.FieldTenantID, field.TypeInt, value)
-	}
-	if value, ok := _u.mutation.AddedTenantID(); ok {
-		_spec.AddField(user.FieldTenantID, field.TypeInt, value)
-	}
-	if _u.mutation.TenantIDCleared() {
-		_spec.ClearField(user.FieldTenantID, field.TypeInt)
-	}
 	if value, ok := _u.mutation.FirstName(); ok {
 		_spec.SetField(user.FieldFirstName, field.TypeString, value)
 	}
@@ -594,6 +553,9 @@ func (_u *UserUpdateOne) sqlSave(ctx context.Context) (_node *User, err error) {
 	}
 	if value, ok := _u.mutation.Status2(); ok {
 		_spec.SetField(user.FieldStatus2, field.TypeBool, value)
+	}
+	if value, ok := _u.mutation.Status3(); ok {
+		_spec.SetField(user.FieldStatus3, field.TypeBool, value)
 	}
 	if _u.mutation.TenantCleared() {
 		edge := &sqlgraph.EdgeSpec{

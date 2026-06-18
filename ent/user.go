@@ -17,8 +17,6 @@ type User struct {
 	config `json:"-"`
 	// ID of the ent.
 	ID int64 `json:"id,omitempty"`
-	// TenantID holds the value of the "tenant_id" field.
-	TenantID int `json:"tenant_id,omitempty"`
 	// FirstName holds the value of the "first_name" field.
 	FirstName string `json:"first_name,omitempty"`
 	// LastName holds the value of the "last_name" field.
@@ -33,6 +31,8 @@ type User struct {
 	Status bool `json:"status,omitempty"`
 	// Status2 holds the value of the "status2" field.
 	Status2 bool `json:"status2,omitempty"`
+	// Status3 holds the value of the "status3" field.
+	Status3 bool `json:"status3,omitempty"`
 	// Edges holds the relations/edges for other nodes in the graph.
 	// The values are being populated by the UserQuery when eager-loading is set.
 	Edges        UserEdges `json:"edges"`
@@ -65,9 +65,9 @@ func (*User) scanValues(columns []string) ([]any, error) {
 	values := make([]any, len(columns))
 	for i := range columns {
 		switch columns[i] {
-		case user.FieldStatus, user.FieldStatus2:
+		case user.FieldStatus, user.FieldStatus2, user.FieldStatus3:
 			values[i] = new(sql.NullBool)
-		case user.FieldID, user.FieldTenantID:
+		case user.FieldID:
 			values[i] = new(sql.NullInt64)
 		case user.FieldFirstName, user.FieldLastName, user.FieldMobile, user.FieldEmail, user.FieldPasswordHash:
 			values[i] = new(sql.NullString)
@@ -94,12 +94,6 @@ func (_m *User) assignValues(columns []string, values []any) error {
 				return fmt.Errorf("unexpected type %T for field id", value)
 			}
 			_m.ID = int64(value.Int64)
-		case user.FieldTenantID:
-			if value, ok := values[i].(*sql.NullInt64); !ok {
-				return fmt.Errorf("unexpected type %T for field tenant_id", values[i])
-			} else if value.Valid {
-				_m.TenantID = int(value.Int64)
-			}
 		case user.FieldFirstName:
 			if value, ok := values[i].(*sql.NullString); !ok {
 				return fmt.Errorf("unexpected type %T for field first_name", values[i])
@@ -141,6 +135,12 @@ func (_m *User) assignValues(columns []string, values []any) error {
 				return fmt.Errorf("unexpected type %T for field status2", values[i])
 			} else if value.Valid {
 				_m.Status2 = value.Bool
+			}
+		case user.FieldStatus3:
+			if value, ok := values[i].(*sql.NullBool); !ok {
+				return fmt.Errorf("unexpected type %T for field status3", values[i])
+			} else if value.Valid {
+				_m.Status3 = value.Bool
 			}
 		case user.ForeignKeys[0]:
 			if value, ok := values[i].(*sql.NullInt64); !ok {
@@ -190,9 +190,6 @@ func (_m *User) String() string {
 	var builder strings.Builder
 	builder.WriteString("User(")
 	builder.WriteString(fmt.Sprintf("id=%v, ", _m.ID))
-	builder.WriteString("tenant_id=")
-	builder.WriteString(fmt.Sprintf("%v", _m.TenantID))
-	builder.WriteString(", ")
 	builder.WriteString("first_name=")
 	builder.WriteString(_m.FirstName)
 	builder.WriteString(", ")
@@ -213,6 +210,9 @@ func (_m *User) String() string {
 	builder.WriteString(", ")
 	builder.WriteString("status2=")
 	builder.WriteString(fmt.Sprintf("%v", _m.Status2))
+	builder.WriteString(", ")
+	builder.WriteString("status3=")
+	builder.WriteString(fmt.Sprintf("%v", _m.Status3))
 	builder.WriteByte(')')
 	return builder.String()
 }

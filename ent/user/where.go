@@ -54,11 +54,6 @@ func IDLTE(id int64) predicate.User {
 	return predicate.User(sql.FieldLTE(FieldID, id))
 }
 
-// TenantID applies equality check predicate on the "tenant_id" field. It's identical to TenantIDEQ.
-func TenantID(v int) predicate.User {
-	return predicate.User(sql.FieldEQ(FieldTenantID, v))
-}
-
 // FirstName applies equality check predicate on the "first_name" field. It's identical to FirstNameEQ.
 func FirstName(v string) predicate.User {
 	return predicate.User(sql.FieldEQ(FieldFirstName, v))
@@ -94,54 +89,9 @@ func Status2(v bool) predicate.User {
 	return predicate.User(sql.FieldEQ(FieldStatus2, v))
 }
 
-// TenantIDEQ applies the EQ predicate on the "tenant_id" field.
-func TenantIDEQ(v int) predicate.User {
-	return predicate.User(sql.FieldEQ(FieldTenantID, v))
-}
-
-// TenantIDNEQ applies the NEQ predicate on the "tenant_id" field.
-func TenantIDNEQ(v int) predicate.User {
-	return predicate.User(sql.FieldNEQ(FieldTenantID, v))
-}
-
-// TenantIDIn applies the In predicate on the "tenant_id" field.
-func TenantIDIn(vs ...int) predicate.User {
-	return predicate.User(sql.FieldIn(FieldTenantID, vs...))
-}
-
-// TenantIDNotIn applies the NotIn predicate on the "tenant_id" field.
-func TenantIDNotIn(vs ...int) predicate.User {
-	return predicate.User(sql.FieldNotIn(FieldTenantID, vs...))
-}
-
-// TenantIDGT applies the GT predicate on the "tenant_id" field.
-func TenantIDGT(v int) predicate.User {
-	return predicate.User(sql.FieldGT(FieldTenantID, v))
-}
-
-// TenantIDGTE applies the GTE predicate on the "tenant_id" field.
-func TenantIDGTE(v int) predicate.User {
-	return predicate.User(sql.FieldGTE(FieldTenantID, v))
-}
-
-// TenantIDLT applies the LT predicate on the "tenant_id" field.
-func TenantIDLT(v int) predicate.User {
-	return predicate.User(sql.FieldLT(FieldTenantID, v))
-}
-
-// TenantIDLTE applies the LTE predicate on the "tenant_id" field.
-func TenantIDLTE(v int) predicate.User {
-	return predicate.User(sql.FieldLTE(FieldTenantID, v))
-}
-
-// TenantIDIsNil applies the IsNil predicate on the "tenant_id" field.
-func TenantIDIsNil() predicate.User {
-	return predicate.User(sql.FieldIsNull(FieldTenantID))
-}
-
-// TenantIDNotNil applies the NotNil predicate on the "tenant_id" field.
-func TenantIDNotNil() predicate.User {
-	return predicate.User(sql.FieldNotNull(FieldTenantID))
+// Status3 applies equality check predicate on the "status3" field. It's identical to Status3EQ.
+func Status3(v bool) predicate.User {
+	return predicate.User(sql.FieldEQ(FieldStatus3, v))
 }
 
 // FirstNameEQ applies the EQ predicate on the "first_name" field.
@@ -487,6 +437,16 @@ func Status2EQ(v bool) predicate.User {
 // Status2NEQ applies the NEQ predicate on the "status2" field.
 func Status2NEQ(v bool) predicate.User {
 	return predicate.User(sql.FieldNEQ(FieldStatus2, v))
+}
+
+// Status3EQ applies the EQ predicate on the "status3" field.
+func Status3EQ(v bool) predicate.User {
+	return predicate.User(sql.FieldEQ(FieldStatus3, v))
+}
+
+// Status3NEQ applies the NEQ predicate on the "status3" field.
+func Status3NEQ(v bool) predicate.User {
+	return predicate.User(sql.FieldNEQ(FieldStatus3, v))
 }
 
 // HasTenant applies the HasEdge predicate on the "tenant" edge.
