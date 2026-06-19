@@ -84,16 +84,6 @@ func Status(v bool) predicate.User {
 	return predicate.User(sql.FieldEQ(FieldStatus, v))
 }
 
-// Status2 applies equality check predicate on the "status2" field. It's identical to Status2EQ.
-func Status2(v bool) predicate.User {
-	return predicate.User(sql.FieldEQ(FieldStatus2, v))
-}
-
-// Status3 applies equality check predicate on the "status3" field. It's identical to Status3EQ.
-func Status3(v bool) predicate.User {
-	return predicate.User(sql.FieldEQ(FieldStatus3, v))
-}
-
 // FirstNameEQ applies the EQ predicate on the "first_name" field.
 func FirstNameEQ(v string) predicate.User {
 	return predicate.User(sql.FieldEQ(FieldFirstName, v))
@@ -427,26 +417,6 @@ func StatusEQ(v bool) predicate.User {
 // StatusNEQ applies the NEQ predicate on the "status" field.
 func StatusNEQ(v bool) predicate.User {
 	return predicate.User(sql.FieldNEQ(FieldStatus, v))
-}
-
-// Status2EQ applies the EQ predicate on the "status2" field.
-func Status2EQ(v bool) predicate.User {
-	return predicate.User(sql.FieldEQ(FieldStatus2, v))
-}
-
-// Status2NEQ applies the NEQ predicate on the "status2" field.
-func Status2NEQ(v bool) predicate.User {
-	return predicate.User(sql.FieldNEQ(FieldStatus2, v))
-}
-
-// Status3EQ applies the EQ predicate on the "status3" field.
-func Status3EQ(v bool) predicate.User {
-	return predicate.User(sql.FieldEQ(FieldStatus3, v))
-}
-
-// Status3NEQ applies the NEQ predicate on the "status3" field.
-func Status3NEQ(v bool) predicate.User {
-	return predicate.User(sql.FieldNEQ(FieldStatus3, v))
 }
 
 // HasTenant applies the HasEdge predicate on the "tenant" edge.

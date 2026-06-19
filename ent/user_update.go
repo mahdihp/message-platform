@@ -112,34 +112,6 @@ func (_u *UserUpdate) SetNillableStatus(v *bool) *UserUpdate {
 	return _u
 }
 
-// SetStatus2 sets the "status2" field.
-func (_u *UserUpdate) SetStatus2(v bool) *UserUpdate {
-	_u.mutation.SetStatus2(v)
-	return _u
-}
-
-// SetNillableStatus2 sets the "status2" field if the given value is not nil.
-func (_u *UserUpdate) SetNillableStatus2(v *bool) *UserUpdate {
-	if v != nil {
-		_u.SetStatus2(*v)
-	}
-	return _u
-}
-
-// SetStatus3 sets the "status3" field.
-func (_u *UserUpdate) SetStatus3(v bool) *UserUpdate {
-	_u.mutation.SetStatus3(v)
-	return _u
-}
-
-// SetNillableStatus3 sets the "status3" field if the given value is not nil.
-func (_u *UserUpdate) SetNillableStatus3(v *bool) *UserUpdate {
-	if v != nil {
-		_u.SetStatus3(*v)
-	}
-	return _u
-}
-
 // SetTenantID sets the "tenant" edge to the Tenant entity by ID.
 func (_u *UserUpdate) SetTenantID(id int) *UserUpdate {
 	_u.mutation.SetTenantID(id)
@@ -246,12 +218,6 @@ func (_u *UserUpdate) sqlSave(ctx context.Context) (_node int, err error) {
 	}
 	if value, ok := _u.mutation.Status(); ok {
 		_spec.SetField(user.FieldStatus, field.TypeBool, value)
-	}
-	if value, ok := _u.mutation.Status2(); ok {
-		_spec.SetField(user.FieldStatus2, field.TypeBool, value)
-	}
-	if value, ok := _u.mutation.Status3(); ok {
-		_spec.SetField(user.FieldStatus3, field.TypeBool, value)
 	}
 	if _u.mutation.TenantCleared() {
 		edge := &sqlgraph.EdgeSpec{
@@ -382,34 +348,6 @@ func (_u *UserUpdateOne) SetStatus(v bool) *UserUpdateOne {
 func (_u *UserUpdateOne) SetNillableStatus(v *bool) *UserUpdateOne {
 	if v != nil {
 		_u.SetStatus(*v)
-	}
-	return _u
-}
-
-// SetStatus2 sets the "status2" field.
-func (_u *UserUpdateOne) SetStatus2(v bool) *UserUpdateOne {
-	_u.mutation.SetStatus2(v)
-	return _u
-}
-
-// SetNillableStatus2 sets the "status2" field if the given value is not nil.
-func (_u *UserUpdateOne) SetNillableStatus2(v *bool) *UserUpdateOne {
-	if v != nil {
-		_u.SetStatus2(*v)
-	}
-	return _u
-}
-
-// SetStatus3 sets the "status3" field.
-func (_u *UserUpdateOne) SetStatus3(v bool) *UserUpdateOne {
-	_u.mutation.SetStatus3(v)
-	return _u
-}
-
-// SetNillableStatus3 sets the "status3" field if the given value is not nil.
-func (_u *UserUpdateOne) SetNillableStatus3(v *bool) *UserUpdateOne {
-	if v != nil {
-		_u.SetStatus3(*v)
 	}
 	return _u
 }
@@ -550,12 +488,6 @@ func (_u *UserUpdateOne) sqlSave(ctx context.Context) (_node *User, err error) {
 	}
 	if value, ok := _u.mutation.Status(); ok {
 		_spec.SetField(user.FieldStatus, field.TypeBool, value)
-	}
-	if value, ok := _u.mutation.Status2(); ok {
-		_spec.SetField(user.FieldStatus2, field.TypeBool, value)
-	}
-	if value, ok := _u.mutation.Status3(); ok {
-		_spec.SetField(user.FieldStatus3, field.TypeBool, value)
 	}
 	if _u.mutation.TenantCleared() {
 		edge := &sqlgraph.EdgeSpec{

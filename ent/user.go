@@ -29,10 +29,6 @@ type User struct {
 	PasswordHash string `json:"password_hash,omitempty"`
 	// Status holds the value of the "status" field.
 	Status bool `json:"status,omitempty"`
-	// Status2 holds the value of the "status2" field.
-	Status2 bool `json:"status2,omitempty"`
-	// Status3 holds the value of the "status3" field.
-	Status3 bool `json:"status3,omitempty"`
 	// Edges holds the relations/edges for other nodes in the graph.
 	// The values are being populated by the UserQuery when eager-loading is set.
 	Edges        UserEdges `json:"edges"`
@@ -65,7 +61,7 @@ func (*User) scanValues(columns []string) ([]any, error) {
 	values := make([]any, len(columns))
 	for i := range columns {
 		switch columns[i] {
-		case user.FieldStatus, user.FieldStatus2, user.FieldStatus3:
+		case user.FieldStatus:
 			values[i] = new(sql.NullBool)
 		case user.FieldID:
 			values[i] = new(sql.NullInt64)
@@ -129,18 +125,6 @@ func (_m *User) assignValues(columns []string, values []any) error {
 				return fmt.Errorf("unexpected type %T for field status", values[i])
 			} else if value.Valid {
 				_m.Status = value.Bool
-			}
-		case user.FieldStatus2:
-			if value, ok := values[i].(*sql.NullBool); !ok {
-				return fmt.Errorf("unexpected type %T for field status2", values[i])
-			} else if value.Valid {
-				_m.Status2 = value.Bool
-			}
-		case user.FieldStatus3:
-			if value, ok := values[i].(*sql.NullBool); !ok {
-				return fmt.Errorf("unexpected type %T for field status3", values[i])
-			} else if value.Valid {
-				_m.Status3 = value.Bool
 			}
 		case user.ForeignKeys[0]:
 			if value, ok := values[i].(*sql.NullInt64); !ok {
@@ -207,12 +191,6 @@ func (_m *User) String() string {
 	builder.WriteString(", ")
 	builder.WriteString("status=")
 	builder.WriteString(fmt.Sprintf("%v", _m.Status))
-	builder.WriteString(", ")
-	builder.WriteString("status2=")
-	builder.WriteString(fmt.Sprintf("%v", _m.Status2))
-	builder.WriteString(", ")
-	builder.WriteString("status3=")
-	builder.WriteString(fmt.Sprintf("%v", _m.Status3))
 	builder.WriteByte(')')
 	return builder.String()
 }

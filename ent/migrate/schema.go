@@ -8,6 +8,36 @@ import (
 )
 
 var (
+	// PermissionsColumns holds the columns for the "permissions" table.
+	PermissionsColumns = []*schema.Column{
+		{Name: "id", Type: field.TypeInt, Increment: true},
+	}
+	// PermissionsTable holds the schema information for the "permissions" table.
+	PermissionsTable = &schema.Table{
+		Name:       "permissions",
+		Columns:    PermissionsColumns,
+		PrimaryKey: []*schema.Column{PermissionsColumns[0]},
+	}
+	// RolesColumns holds the columns for the "roles" table.
+	RolesColumns = []*schema.Column{
+		{Name: "id", Type: field.TypeInt, Increment: true},
+	}
+	// RolesTable holds the schema information for the "roles" table.
+	RolesTable = &schema.Table{
+		Name:       "roles",
+		Columns:    RolesColumns,
+		PrimaryKey: []*schema.Column{RolesColumns[0]},
+	}
+	// ScopesColumns holds the columns for the "scopes" table.
+	ScopesColumns = []*schema.Column{
+		{Name: "id", Type: field.TypeInt, Increment: true},
+	}
+	// ScopesTable holds the schema information for the "scopes" table.
+	ScopesTable = &schema.Table{
+		Name:       "scopes",
+		Columns:    ScopesColumns,
+		PrimaryKey: []*schema.Column{ScopesColumns[0]},
+	}
 	// TenantsColumns holds the columns for the "tenants" table.
 	TenantsColumns = []*schema.Column{
 		{Name: "id", Type: field.TypeInt, Increment: true},
@@ -41,8 +71,6 @@ var (
 		{Name: "email", Type: field.TypeString, Size: 100},
 		{Name: "password_hash", Type: field.TypeString},
 		{Name: "status", Type: field.TypeBool},
-		{Name: "status2", Type: field.TypeBool},
-		{Name: "status3", Type: field.TypeBool},
 		{Name: "tenant_users", Type: field.TypeInt},
 	}
 	// UsersTable holds the schema information for the "users" table.
@@ -53,7 +81,7 @@ var (
 		ForeignKeys: []*schema.ForeignKey{
 			{
 				Symbol:     "users_tenants_users",
-				Columns:    []*schema.Column{UsersColumns[9]},
+				Columns:    []*schema.Column{UsersColumns[7]},
 				RefColumns: []*schema.Column{TenantsColumns[0]},
 				OnDelete:   schema.NoAction,
 			},
@@ -61,6 +89,9 @@ var (
 	}
 	// Tables holds all the tables in the schema.
 	Tables = []*schema.Table{
+		PermissionsTable,
+		RolesTable,
+		ScopesTable,
 		TenantsTable,
 		UsersTable,
 	}

@@ -6,6 +6,9 @@ import (
 	"context"
 	"errors"
 	"fmt"
+	"message-platform/ent/permission"
+	"message-platform/ent/role"
+	"message-platform/ent/scope"
 	"message-platform/ent/tenant"
 	"message-platform/ent/user"
 	"reflect"
@@ -74,8 +77,11 @@ var (
 func checkColumn(t, c string) error {
 	initCheck.Do(func() {
 		columnCheck = sql.NewColumnCheck(map[string]func(string) bool{
-			tenant.Table: tenant.ValidColumn,
-			user.Table:   user.ValidColumn,
+			permission.Table: permission.ValidColumn,
+			role.Table:       role.ValidColumn,
+			scope.Table:      scope.ValidColumn,
+			tenant.Table:     tenant.ValidColumn,
+			user.Table:       user.ValidColumn,
 		})
 	})
 	return columnCheck(t, c)

@@ -24,8 +24,6 @@ func (User) Fields() []ent.Field {
 		field.String("email").MaxLen(100),
 		field.String("password_hash"),
 		field.Bool("status"),
-		field.Bool("status2"),
-		field.Bool("status3"),
 	}
 }
 

@@ -24,10 +24,6 @@ const (
 	FieldPasswordHash = "password_hash"
 	// FieldStatus holds the string denoting the status field in the database.
 	FieldStatus = "status"
-	// FieldStatus2 holds the string denoting the status2 field in the database.
-	FieldStatus2 = "status2"
-	// FieldStatus3 holds the string denoting the status3 field in the database.
-	FieldStatus3 = "status3"
 	// EdgeTenant holds the string denoting the tenant edge name in mutations.
 	EdgeTenant = "tenant"
 	// Table holds the table name of the user in the database.
@@ -50,8 +46,6 @@ var Columns = []string{
 	FieldEmail,
 	FieldPasswordHash,
 	FieldStatus,
-	FieldStatus2,
-	FieldStatus3,
 }
 
 // ForeignKeys holds the SQL foreign-keys that are owned by the "users"
@@ -122,16 +116,6 @@ func ByPasswordHash(opts ...sql.OrderTermOption) OrderOption {
 // ByStatus orders the results by the status field.
 func ByStatus(opts ...sql.OrderTermOption) OrderOption {
 	return sql.OrderByField(FieldStatus, opts...).ToFunc()
-}
-
-// ByStatus2 orders the results by the status2 field.
-func ByStatus2(opts ...sql.OrderTermOption) OrderOption {
-	return sql.OrderByField(FieldStatus2, opts...).ToFunc()
-}
-
-// ByStatus3 orders the results by the status3 field.
-func ByStatus3(opts ...sql.OrderTermOption) OrderOption {
-	return sql.OrderByField(FieldStatus3, opts...).ToFunc()
 }
 
 // ByTenantField orders the results by tenant field.
