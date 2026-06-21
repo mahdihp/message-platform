@@ -1,24 +1,23 @@
 package main
 
 import (
-	"context"
-	"fmt"
-	"log"
-	"message-platform/ent"
+	"message-platform/configs"
 
 	_ "github.com/lib/pq"
 )
 
 func main() {
-	client, err := ent.Open("postgres", "host=localhost port=5432 user=admin dbname=mydb password=123456 sslmode=disable")
-	if err != nil {
-		log.Fatalf("failed opening connection to postgres: %v", err)
-	}
-	defer client.Close()
-	// Run the auto migration tool.
-	if err := client.Schema.Create(context.Background()); err != nil {
-		log.Fatalf("failed creating schema resources: %v", err)
-	}
+	//client, err := ent.Open("postgres", "host=localhost port=5432 user=admin dbname=mydb password=123456 sslmode=disable")
+	//if err != nil {
+	//	log.Fatalf("failed opening connection to postgres: %v", err)
+	//}
+	//defer client.Close()
+	//// Run the auto migration tool.
+	//if err := client.Schema.Create(context.Background()); err != nil {
+	//	log.Fatalf("failed creating schema resources: %v", err)
+	//}
+	//
+	//fmt.Println("wwwwwwww")
 
-	fmt.Println("wwwwwwww")
+	configs.LoadConfig()
 }
