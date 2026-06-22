@@ -1,7 +1,6 @@
 package configs
 
 import (
-	"fmt"
 	"strings"
 
 	"github.com/knadh/koanf/parsers/dotenv"
@@ -17,20 +16,20 @@ type Config struct {
 type MessagePlatform struct {
 	Host                    string `koanf:"host"`
 	Port                    int    `koanf:"port"`
-	GracefulShutdownTimeout int    `koanf:"gracefulshutdowntimeout"`
+	GracefulShutdownTimeout int    `koanf:"graceful_shutdown_timeout"`
 }
 
 type Database struct {
-	Host     string `koanf:"host"`
-	Port     int    `koanf:"port"`
-	Name     string `koanf:"name"`
-	Username string `koanf:"username"`
-	Password string `koanf:"password"`
+	Host     string `koanf:"db_host"`
+	Port     int    `koanf:"db_port"`
+	Name     string `koanf:"db_name"`
+	Username string `koanf:"db_username"`
+	Password string `koanf:"db_password"`
 }
 
 var k = koanf.New(".")
 
-func LoadConfig() {
+func LoadConfig() Config {
 
 	err := k.Load(
 		file.Provider(".env"),
@@ -43,16 +42,12 @@ func LoadConfig() {
 	nk := koanf.New(".")
 
 	for k1, v := range k.All() {
-
-		//if strings.TrimPrefix(k1, "MP_DB_")  {
-		//
-		//}
-		key := strings.ToLower(strings.TrimPrefix(k1, "MP_"))
-		key = strings.ReplaceAll(key, "_", ".")
-
+		key := strings.ReplaceAll(k1, "MP_", "")
+		key = strings.ToLower(key)
 		nk.Set(key, v)
+
 	}
-	//fmt.Printf("%#v\n", nk.All())
+	//fmt.Printf("%#v\n\n", nk.All())
 	var cfg Config
 
 	if err := nk.Unmarshal("", &cfg.MessagePlatform); err != nil {
@@ -62,5 +57,6 @@ func LoadConfig() {
 		panic(err)
 	}
 
-	fmt.Printf("%+v\n", cfg)
+	//fmt.Printf("%+v\n", cfg)
+	return cfg
 }
