@@ -4,6 +4,7 @@ package ent
 
 import (
 	"context"
+	"errors"
 	"fmt"
 	"message-platform/ent/permission"
 
@@ -16,6 +17,36 @@ type PermissionCreate struct {
 	config
 	mutation *PermissionMutation
 	hooks    []Hook
+}
+
+// SetCode sets the "code" field.
+func (_c *PermissionCreate) SetCode(v string) *PermissionCreate {
+	_c.mutation.SetCode(v)
+	return _c
+}
+
+// SetName sets the "name" field.
+func (_c *PermissionCreate) SetName(v string) *PermissionCreate {
+	_c.mutation.SetName(v)
+	return _c
+}
+
+// SetModule sets the "module" field.
+func (_c *PermissionCreate) SetModule(v string) *PermissionCreate {
+	_c.mutation.SetModule(v)
+	return _c
+}
+
+// SetDescription sets the "description" field.
+func (_c *PermissionCreate) SetDescription(v string) *PermissionCreate {
+	_c.mutation.SetDescription(v)
+	return _c
+}
+
+// SetID sets the "id" field.
+func (_c *PermissionCreate) SetID(v int) *PermissionCreate {
+	_c.mutation.SetID(v)
+	return _c
 }
 
 // Mutation returns the PermissionMutation object of the builder.
@@ -52,6 +83,23 @@ func (_c *PermissionCreate) ExecX(ctx context.Context) {
 
 // check runs all checks and user-defined validators on the builder.
 func (_c *PermissionCreate) check() error {
+	if _, ok := _c.mutation.Code(); !ok {
+		return &ValidationError{Name: "code", err: errors.New(`ent: missing required field "Permission.code"`)}
+	}
+	if _, ok := _c.mutation.Name(); !ok {
+		return &ValidationError{Name: "name", err: errors.New(`ent: missing required field "Permission.name"`)}
+	}
+	if _, ok := _c.mutation.Module(); !ok {
+		return &ValidationError{Name: "module", err: errors.New(`ent: missing required field "Permission.module"`)}
+	}
+	if _, ok := _c.mutation.Description(); !ok {
+		return &ValidationError{Name: "description", err: errors.New(`ent: missing required field "Permission.description"`)}
+	}
+	if v, ok := _c.mutation.Description(); ok {
+		if err := permission.DescriptionValidator(v); err != nil {
+			return &ValidationError{Name: "description", err: fmt.Errorf(`ent: validator failed for field "Permission.description": %w`, err)}
+		}
+	}
 	return nil
 }
 
@@ -66,8 +114,10 @@ func (_c *PermissionCreate) sqlSave(ctx context.Context) (*Permission, error) {
 		}
 		return nil, err
 	}
-	id := _spec.ID.Value.(int64)
-	_node.ID = int(id)
+	if _spec.ID.Value != _node.ID {
+		id := _spec.ID.Value.(int64)
+		_node.ID = int(id)
+	}
 	_c.mutation.id = &_node.ID
 	_c.mutation.done = true
 	return _node, nil
@@ -78,6 +128,26 @@ func (_c *PermissionCreate) createSpec() (*Permission, *sqlgraph.CreateSpec) {
 		_node = &Permission{config: _c.config}
 		_spec = sqlgraph.NewCreateSpec(permission.Table, sqlgraph.NewFieldSpec(permission.FieldID, field.TypeInt))
 	)
+	if id, ok := _c.mutation.ID(); ok {
+		_node.ID = id
+		_spec.ID.Value = id
+	}
+	if value, ok := _c.mutation.Code(); ok {
+		_spec.SetField(permission.FieldCode, field.TypeString, value)
+		_node.Code = value
+	}
+	if value, ok := _c.mutation.Name(); ok {
+		_spec.SetField(permission.FieldName, field.TypeString, value)
+		_node.Name = value
+	}
+	if value, ok := _c.mutation.Module(); ok {
+		_spec.SetField(permission.FieldModule, field.TypeString, value)
+		_node.Module = value
+	}
+	if value, ok := _c.mutation.Description(); ok {
+		_spec.SetField(permission.FieldDescription, field.TypeString, value)
+		_node.Description = value
+	}
 	return _node, _spec
 }
 
@@ -125,7 +195,7 @@ func (_c *PermissionCreateBulk) Save(ctx context.Context) ([]*Permission, error)
 					return nil, err
 				}
 				mutation.id = &nodes[i].ID
-				if specs[i].ID.Value != nil {
+				if specs[i].ID.Value != nil && nodes[i].ID == 0 {
 					id := specs[i].ID.Value.(int64)
 					nodes[i].ID = int(id)
 				}

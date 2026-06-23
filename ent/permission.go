@@ -13,9 +13,17 @@ import (
 
 // Permission is the model entity for the Permission schema.
 type Permission struct {
-	config
+	config `json:"-"`
 	// ID of the ent.
-	ID           int `json:"id,omitempty"`
+	ID int `json:"id,omitempty"`
+	// Code holds the value of the "code" field.
+	Code string `json:"code,omitempty"`
+	// Name holds the value of the "name" field.
+	Name string `json:"name,omitempty"`
+	// Module holds the value of the "module" field.
+	Module string `json:"module,omitempty"`
+	// Description holds the value of the "description" field.
+	Description  string `json:"description,omitempty"`
 	selectValues sql.SelectValues
 }
 
@@ -26,6 +34,8 @@ func (*Permission) scanValues(columns []string) ([]any, error) {
 		switch columns[i] {
 		case permission.FieldID:
 			values[i] = new(sql.NullInt64)
+		case permission.FieldCode, permission.FieldName, permission.FieldModule, permission.FieldDescription:
+			values[i] = new(sql.NullString)
 		default:
 			values[i] = new(sql.UnknownType)
 		}
@@ -47,6 +57,30 @@ func (_m *Permission) assignValues(columns []string, values []any) error {
 				return fmt.Errorf("unexpected type %T for field id", value)
 			}
 			_m.ID = int(value.Int64)
+		case permission.FieldCode:
+			if value, ok := values[i].(*sql.NullString); !ok {
+				return fmt.Errorf("unexpected type %T for field code", values[i])
+			} else if value.Valid {
+				_m.Code = value.String
+			}
+		case permission.FieldName:
+			if value, ok := values[i].(*sql.NullString); !ok {
+				return fmt.Errorf("unexpected type %T for field name", values[i])
+			} else if value.Valid {
+				_m.Name = value.String
+			}
+		case permission.FieldModule:
+			if value, ok := values[i].(*sql.NullString); !ok {
+				return fmt.Errorf("unexpected type %T for field module", values[i])
+			} else if value.Valid {
+				_m.Module = value.String
+			}
+		case permission.FieldDescription:
+			if value, ok := values[i].(*sql.NullString); !ok {
+				return fmt.Errorf("unexpected type %T for field description", values[i])
+			} else if value.Valid {
+				_m.Description = value.String
+			}
 		default:
 			_m.selectValues.Set(columns[i], values[i])
 		}
@@ -82,7 +116,18 @@ func (_m *Permission) Unwrap() *Permission {
 func (_m *Permission) String() string {
 	var builder strings.Builder
 	builder.WriteString("Permission(")
-	builder.WriteString(fmt.Sprintf("id=%v", _m.ID))
+	builder.WriteString(fmt.Sprintf("id=%v, ", _m.ID))
+	builder.WriteString("code=")
+	builder.WriteString(_m.Code)
+	builder.WriteString(", ")
+	builder.WriteString("name=")
+	builder.WriteString(_m.Name)
+	builder.WriteString(", ")
+	builder.WriteString("module=")
+	builder.WriteString(_m.Module)
+	builder.WriteString(", ")
+	builder.WriteString("description=")
+	builder.WriteString(_m.Description)
 	builder.WriteByte(')')
 	return builder.String()
 }

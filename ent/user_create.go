@@ -8,6 +8,7 @@ import (
 	"fmt"
 	"message-platform/ent/tenant"
 	"message-platform/ent/user"
+	"time"
 
 	"entgo.io/ent/dialect/sql/sqlgraph"
 	"entgo.io/ent/schema/field"
@@ -18,6 +19,48 @@ type UserCreate struct {
 	config
 	mutation *UserMutation
 	hooks    []Hook
+}
+
+// SetCreatedAt sets the "created_at" field.
+func (_c *UserCreate) SetCreatedAt(v time.Time) *UserCreate {
+	_c.mutation.SetCreatedAt(v)
+	return _c
+}
+
+// SetNillableCreatedAt sets the "created_at" field if the given value is not nil.
+func (_c *UserCreate) SetNillableCreatedAt(v *time.Time) *UserCreate {
+	if v != nil {
+		_c.SetCreatedAt(*v)
+	}
+	return _c
+}
+
+// SetUpdatedAt sets the "updated_at" field.
+func (_c *UserCreate) SetUpdatedAt(v time.Time) *UserCreate {
+	_c.mutation.SetUpdatedAt(v)
+	return _c
+}
+
+// SetNillableUpdatedAt sets the "updated_at" field if the given value is not nil.
+func (_c *UserCreate) SetNillableUpdatedAt(v *time.Time) *UserCreate {
+	if v != nil {
+		_c.SetUpdatedAt(*v)
+	}
+	return _c
+}
+
+// SetDeletedAt sets the "deleted_at" field.
+func (_c *UserCreate) SetDeletedAt(v time.Time) *UserCreate {
+	_c.mutation.SetDeletedAt(v)
+	return _c
+}
+
+// SetNillableDeletedAt sets the "deleted_at" field if the given value is not nil.
+func (_c *UserCreate) SetNillableDeletedAt(v *time.Time) *UserCreate {
+	if v != nil {
+		_c.SetDeletedAt(*v)
+	}
+	return _c
 }
 
 // SetFirstName sets the "first_name" field.
@@ -80,6 +123,7 @@ func (_c *UserCreate) Mutation() *UserMutation {
 
 // Save creates the User in the database.
 func (_c *UserCreate) Save(ctx context.Context) (*User, error) {
+	_c.defaults()
 	return withHooks(ctx, _c.sqlSave, _c.mutation, _c.hooks)
 }
 
@@ -105,8 +149,33 @@ func (_c *UserCreate) ExecX(ctx context.Context) {
 	}
 }
 
+// defaults sets the default values of the builder before save.
+func (_c *UserCreate) defaults() {
+	if _, ok := _c.mutation.CreatedAt(); !ok {
+		v := user.DefaultCreatedAt()
+		_c.mutation.SetCreatedAt(v)
+	}
+	if _, ok := _c.mutation.UpdatedAt(); !ok {
+		v := user.DefaultUpdatedAt()
+		_c.mutation.SetUpdatedAt(v)
+	}
+	if _, ok := _c.mutation.DeletedAt(); !ok {
+		v := user.DefaultDeletedAt()
+		_c.mutation.SetDeletedAt(v)
+	}
+}
+
 // check runs all checks and user-defined validators on the builder.
 func (_c *UserCreate) check() error {
+	if _, ok := _c.mutation.CreatedAt(); !ok {
+		return &ValidationError{Name: "created_at", err: errors.New(`ent: missing required field "User.created_at"`)}
+	}
+	if _, ok := _c.mutation.UpdatedAt(); !ok {
+		return &ValidationError{Name: "updated_at", err: errors.New(`ent: missing required field "User.updated_at"`)}
+	}
+	if _, ok := _c.mutation.DeletedAt(); !ok {
+		return &ValidationError{Name: "deleted_at", err: errors.New(`ent: missing required field "User.deleted_at"`)}
+	}
 	if _, ok := _c.mutation.FirstName(); !ok {
 		return &ValidationError{Name: "first_name", err: errors.New(`ent: missing required field "User.first_name"`)}
 	}
@@ -180,6 +249,18 @@ func (_c *UserCreate) createSpec() (*User, *sqlgraph.CreateSpec) {
 		_node.ID = id
 		_spec.ID.Value = id
 	}
+	if value, ok := _c.mutation.CreatedAt(); ok {
+		_spec.SetField(user.FieldCreatedAt, field.TypeTime, value)
+		_node.CreatedAt = value
+	}
+	if value, ok := _c.mutation.UpdatedAt(); ok {
+		_spec.SetField(user.FieldUpdatedAt, field.TypeTime, value)
+		_node.UpdatedAt = value
+	}
+	if value, ok := _c.mutation.DeletedAt(); ok {
+		_spec.SetField(user.FieldDeletedAt, field.TypeTime, value)
+		_node.DeletedAt = value
+	}
 	if value, ok := _c.mutation.FirstName(); ok {
 		_spec.SetField(user.FieldFirstName, field.TypeString, value)
 		_node.FirstName = value
@@ -242,6 +323,7 @@ func (_c *UserCreateBulk) Save(ctx context.Context) ([]*User, error) {
 	for i := range _c.builders {
 		func(i int, root context.Context) {
 			builder := _c.builders[i]
+			builder.defaults()
 			var mut Mutator = MutateFunc(func(ctx context.Context, m Mutation) (Value, error) {
 				mutation, ok := m.(*UserMutation)
 				if !ok {

@@ -27,10 +27,8 @@ type Database struct {
 	Password string `koanf:"db_password"`
 }
 
-var k = koanf.New(".")
-
 func LoadConfig() Config {
-
+	var k = koanf.New(".")
 	err := k.Load(
 		file.Provider(".env"),
 		dotenv.Parser(),
@@ -45,7 +43,6 @@ func LoadConfig() Config {
 		key := strings.ReplaceAll(k1, "MP_", "")
 		key = strings.ToLower(key)
 		nk.Set(key, v)
-
 	}
 	//fmt.Printf("%#v\n\n", nk.All())
 	var cfg Config

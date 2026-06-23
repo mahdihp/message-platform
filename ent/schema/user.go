@@ -1,6 +1,8 @@
 package schema
 
 import (
+	"message-platform/ent/schema/mixin"
+
 	"entgo.io/ent"
 	"entgo.io/ent/dialect"
 	"entgo.io/ent/schema/edge"
@@ -19,11 +21,24 @@ func (User) Fields() []ent.Field {
 		field.String("first_name").MaxLen(50).SchemaType(map[string]string{
 			dialect.Postgres: "varchar(50)",
 		}),
-		field.String("last_name").MaxLen(50),
-		field.String("mobile").MaxLen(11),
-		field.String("email").MaxLen(100),
+		field.String("last_name").MaxLen(50).SchemaType(map[string]string{
+			dialect.Postgres: "varchar(70)",
+		}),
+		field.String("mobile").MaxLen(11).SchemaType(map[string]string{
+			dialect.Postgres: "char(11)",
+		}),
+		field.String("email").MaxLen(100).SchemaType(map[string]string{
+			dialect.Postgres: "varchar(100)",
+		}),
 		field.String("password_hash"),
 		field.Bool("status"),
+	}
+}
+
+func (User) Mixin() []ent.Mixin {
+	return []ent.Mixin{
+		mixin.TimeMixin{},
+		mixin.DeleteMixin{},
 	}
 }
 

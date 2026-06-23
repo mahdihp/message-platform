@@ -15,14 +15,14 @@ func init() {
 }
 
 func main() {
-	system_Config := configs.LoadConfig()
-	setupDB(system_Config)
+	systemConfig := configs.LoadConfig()
+	setupDatabase(systemConfig)
 
 }
 
-func setupDB(system_Config configs.Config) {
+func setupDatabase(systemConfig configs.Config) {
 	connectionString := fmt.Sprintf("host=%s port=%d user=%s dbname=%s password=%s sslmode=disable",
-		system_Config.Database.Host, system_Config.Database.Port, system_Config.Database.Username, system_Config.Database.Name, system_Config.Database.Password)
+		systemConfig.Database.Host, systemConfig.Database.Port, systemConfig.Database.Username, systemConfig.Database.Name, systemConfig.Database.Password)
 	client, err := ent.Open("postgres", connectionString)
 	if err != nil {
 		log.Fatalf("failed opening connection to postgres: %v", err)

@@ -27,6 +27,62 @@ func (_u *PermissionUpdate) Where(ps ...predicate.Permission) *PermissionUpdate 
 	return _u
 }
 
+// SetCode sets the "code" field.
+func (_u *PermissionUpdate) SetCode(v string) *PermissionUpdate {
+	_u.mutation.SetCode(v)
+	return _u
+}
+
+// SetNillableCode sets the "code" field if the given value is not nil.
+func (_u *PermissionUpdate) SetNillableCode(v *string) *PermissionUpdate {
+	if v != nil {
+		_u.SetCode(*v)
+	}
+	return _u
+}
+
+// SetName sets the "name" field.
+func (_u *PermissionUpdate) SetName(v string) *PermissionUpdate {
+	_u.mutation.SetName(v)
+	return _u
+}
+
+// SetNillableName sets the "name" field if the given value is not nil.
+func (_u *PermissionUpdate) SetNillableName(v *string) *PermissionUpdate {
+	if v != nil {
+		_u.SetName(*v)
+	}
+	return _u
+}
+
+// SetModule sets the "module" field.
+func (_u *PermissionUpdate) SetModule(v string) *PermissionUpdate {
+	_u.mutation.SetModule(v)
+	return _u
+}
+
+// SetNillableModule sets the "module" field if the given value is not nil.
+func (_u *PermissionUpdate) SetNillableModule(v *string) *PermissionUpdate {
+	if v != nil {
+		_u.SetModule(*v)
+	}
+	return _u
+}
+
+// SetDescription sets the "description" field.
+func (_u *PermissionUpdate) SetDescription(v string) *PermissionUpdate {
+	_u.mutation.SetDescription(v)
+	return _u
+}
+
+// SetNillableDescription sets the "description" field if the given value is not nil.
+func (_u *PermissionUpdate) SetNillableDescription(v *string) *PermissionUpdate {
+	if v != nil {
+		_u.SetDescription(*v)
+	}
+	return _u
+}
+
 // Mutation returns the PermissionMutation object of the builder.
 func (_u *PermissionUpdate) Mutation() *PermissionMutation {
 	return _u.mutation
@@ -59,7 +115,20 @@ func (_u *PermissionUpdate) ExecX(ctx context.Context) {
 	}
 }
 
+// check runs all checks and user-defined validators on the builder.
+func (_u *PermissionUpdate) check() error {
+	if v, ok := _u.mutation.Description(); ok {
+		if err := permission.DescriptionValidator(v); err != nil {
+			return &ValidationError{Name: "description", err: fmt.Errorf(`ent: validator failed for field "Permission.description": %w`, err)}
+		}
+	}
+	return nil
+}
+
 func (_u *PermissionUpdate) sqlSave(ctx context.Context) (_node int, err error) {
+	if err := _u.check(); err != nil {
+		return _node, err
+	}
 	_spec := sqlgraph.NewUpdateSpec(permission.Table, permission.Columns, sqlgraph.NewFieldSpec(permission.FieldID, field.TypeInt))
 	if ps := _u.mutation.predicates; len(ps) > 0 {
 		_spec.Predicate = func(selector *sql.Selector) {
@@ -67,6 +136,18 @@ func (_u *PermissionUpdate) sqlSave(ctx context.Context) (_node int, err error) 
 				ps[i](selector)
 			}
 		}
+	}
+	if value, ok := _u.mutation.Code(); ok {
+		_spec.SetField(permission.FieldCode, field.TypeString, value)
+	}
+	if value, ok := _u.mutation.Name(); ok {
+		_spec.SetField(permission.FieldName, field.TypeString, value)
+	}
+	if value, ok := _u.mutation.Module(); ok {
+		_spec.SetField(permission.FieldModule, field.TypeString, value)
+	}
+	if value, ok := _u.mutation.Description(); ok {
+		_spec.SetField(permission.FieldDescription, field.TypeString, value)
 	}
 	if _node, err = sqlgraph.UpdateNodes(ctx, _u.driver, _spec); err != nil {
 		if _, ok := err.(*sqlgraph.NotFoundError); ok {
@@ -86,6 +167,62 @@ type PermissionUpdateOne struct {
 	fields   []string
 	hooks    []Hook
 	mutation *PermissionMutation
+}
+
+// SetCode sets the "code" field.
+func (_u *PermissionUpdateOne) SetCode(v string) *PermissionUpdateOne {
+	_u.mutation.SetCode(v)
+	return _u
+}
+
+// SetNillableCode sets the "code" field if the given value is not nil.
+func (_u *PermissionUpdateOne) SetNillableCode(v *string) *PermissionUpdateOne {
+	if v != nil {
+		_u.SetCode(*v)
+	}
+	return _u
+}
+
+// SetName sets the "name" field.
+func (_u *PermissionUpdateOne) SetName(v string) *PermissionUpdateOne {
+	_u.mutation.SetName(v)
+	return _u
+}
+
+// SetNillableName sets the "name" field if the given value is not nil.
+func (_u *PermissionUpdateOne) SetNillableName(v *string) *PermissionUpdateOne {
+	if v != nil {
+		_u.SetName(*v)
+	}
+	return _u
+}
+
+// SetModule sets the "module" field.
+func (_u *PermissionUpdateOne) SetModule(v string) *PermissionUpdateOne {
+	_u.mutation.SetModule(v)
+	return _u
+}
+
+// SetNillableModule sets the "module" field if the given value is not nil.
+func (_u *PermissionUpdateOne) SetNillableModule(v *string) *PermissionUpdateOne {
+	if v != nil {
+		_u.SetModule(*v)
+	}
+	return _u
+}
+
+// SetDescription sets the "description" field.
+func (_u *PermissionUpdateOne) SetDescription(v string) *PermissionUpdateOne {
+	_u.mutation.SetDescription(v)
+	return _u
+}
+
+// SetNillableDescription sets the "description" field if the given value is not nil.
+func (_u *PermissionUpdateOne) SetNillableDescription(v *string) *PermissionUpdateOne {
+	if v != nil {
+		_u.SetDescription(*v)
+	}
+	return _u
 }
 
 // Mutation returns the PermissionMutation object of the builder.
@@ -133,7 +270,20 @@ func (_u *PermissionUpdateOne) ExecX(ctx context.Context) {
 	}
 }
 
+// check runs all checks and user-defined validators on the builder.
+func (_u *PermissionUpdateOne) check() error {
+	if v, ok := _u.mutation.Description(); ok {
+		if err := permission.DescriptionValidator(v); err != nil {
+			return &ValidationError{Name: "description", err: fmt.Errorf(`ent: validator failed for field "Permission.description": %w`, err)}
+		}
+	}
+	return nil
+}
+
 func (_u *PermissionUpdateOne) sqlSave(ctx context.Context) (_node *Permission, err error) {
+	if err := _u.check(); err != nil {
+		return _node, err
+	}
 	_spec := sqlgraph.NewUpdateSpec(permission.Table, permission.Columns, sqlgraph.NewFieldSpec(permission.FieldID, field.TypeInt))
 	id, ok := _u.mutation.ID()
 	if !ok {
@@ -158,6 +308,18 @@ func (_u *PermissionUpdateOne) sqlSave(ctx context.Context) (_node *Permission, 
 				ps[i](selector)
 			}
 		}
+	}
+	if value, ok := _u.mutation.Code(); ok {
+		_spec.SetField(permission.FieldCode, field.TypeString, value)
+	}
+	if value, ok := _u.mutation.Name(); ok {
+		_spec.SetField(permission.FieldName, field.TypeString, value)
+	}
+	if value, ok := _u.mutation.Module(); ok {
+		_spec.SetField(permission.FieldModule, field.TypeString, value)
+	}
+	if value, ok := _u.mutation.Description(); ok {
+		_spec.SetField(permission.FieldDescription, field.TypeString, value)
 	}
 	_node = &Permission{config: _u.config}
 	_spec.Assign = _node.assignValues

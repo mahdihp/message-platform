@@ -53,6 +53,286 @@ func IDLTE(id int) predicate.Permission {
 	return predicate.Permission(sql.FieldLTE(FieldID, id))
 }
 
+// Code applies equality check predicate on the "code" field. It's identical to CodeEQ.
+func Code(v string) predicate.Permission {
+	return predicate.Permission(sql.FieldEQ(FieldCode, v))
+}
+
+// Name applies equality check predicate on the "name" field. It's identical to NameEQ.
+func Name(v string) predicate.Permission {
+	return predicate.Permission(sql.FieldEQ(FieldName, v))
+}
+
+// Module applies equality check predicate on the "module" field. It's identical to ModuleEQ.
+func Module(v string) predicate.Permission {
+	return predicate.Permission(sql.FieldEQ(FieldModule, v))
+}
+
+// Description applies equality check predicate on the "description" field. It's identical to DescriptionEQ.
+func Description(v string) predicate.Permission {
+	return predicate.Permission(sql.FieldEQ(FieldDescription, v))
+}
+
+// CodeEQ applies the EQ predicate on the "code" field.
+func CodeEQ(v string) predicate.Permission {
+	return predicate.Permission(sql.FieldEQ(FieldCode, v))
+}
+
+// CodeNEQ applies the NEQ predicate on the "code" field.
+func CodeNEQ(v string) predicate.Permission {
+	return predicate.Permission(sql.FieldNEQ(FieldCode, v))
+}
+
+// CodeIn applies the In predicate on the "code" field.
+func CodeIn(vs ...string) predicate.Permission {
+	return predicate.Permission(sql.FieldIn(FieldCode, vs...))
+}
+
+// CodeNotIn applies the NotIn predicate on the "code" field.
+func CodeNotIn(vs ...string) predicate.Permission {
+	return predicate.Permission(sql.FieldNotIn(FieldCode, vs...))
+}
+
+// CodeGT applies the GT predicate on the "code" field.
+func CodeGT(v string) predicate.Permission {
+	return predicate.Permission(sql.FieldGT(FieldCode, v))
+}
+
+// CodeGTE applies the GTE predicate on the "code" field.
+func CodeGTE(v string) predicate.Permission {
+	return predicate.Permission(sql.FieldGTE(FieldCode, v))
+}
+
+// CodeLT applies the LT predicate on the "code" field.
+func CodeLT(v string) predicate.Permission {
+	return predicate.Permission(sql.FieldLT(FieldCode, v))
+}
+
+// CodeLTE applies the LTE predicate on the "code" field.
+func CodeLTE(v string) predicate.Permission {
+	return predicate.Permission(sql.FieldLTE(FieldCode, v))
+}
+
+// CodeContains applies the Contains predicate on the "code" field.
+func CodeContains(v string) predicate.Permission {
+	return predicate.Permission(sql.FieldContains(FieldCode, v))
+}
+
+// CodeHasPrefix applies the HasPrefix predicate on the "code" field.
+func CodeHasPrefix(v string) predicate.Permission {
+	return predicate.Permission(sql.FieldHasPrefix(FieldCode, v))
+}
+
+// CodeHasSuffix applies the HasSuffix predicate on the "code" field.
+func CodeHasSuffix(v string) predicate.Permission {
+	return predicate.Permission(sql.FieldHasSuffix(FieldCode, v))
+}
+
+// CodeEqualFold applies the EqualFold predicate on the "code" field.
+func CodeEqualFold(v string) predicate.Permission {
+	return predicate.Permission(sql.FieldEqualFold(FieldCode, v))
+}
+
+// CodeContainsFold applies the ContainsFold predicate on the "code" field.
+func CodeContainsFold(v string) predicate.Permission {
+	return predicate.Permission(sql.FieldContainsFold(FieldCode, v))
+}
+
+// NameEQ applies the EQ predicate on the "name" field.
+func NameEQ(v string) predicate.Permission {
+	return predicate.Permission(sql.FieldEQ(FieldName, v))
+}
+
+// NameNEQ applies the NEQ predicate on the "name" field.
+func NameNEQ(v string) predicate.Permission {
+	return predicate.Permission(sql.FieldNEQ(FieldName, v))
+}
+
+// NameIn applies the In predicate on the "name" field.
+func NameIn(vs ...string) predicate.Permission {
+	return predicate.Permission(sql.FieldIn(FieldName, vs...))
+}
+
+// NameNotIn applies the NotIn predicate on the "name" field.
+func NameNotIn(vs ...string) predicate.Permission {
+	return predicate.Permission(sql.FieldNotIn(FieldName, vs...))
+}
+
+// NameGT applies the GT predicate on the "name" field.
+func NameGT(v string) predicate.Permission {
+	return predicate.Permission(sql.FieldGT(FieldName, v))
+}
+
+// NameGTE applies the GTE predicate on the "name" field.
+func NameGTE(v string) predicate.Permission {
+	return predicate.Permission(sql.FieldGTE(FieldName, v))
+}
+
+// NameLT applies the LT predicate on the "name" field.
+func NameLT(v string) predicate.Permission {
+	return predicate.Permission(sql.FieldLT(FieldName, v))
+}
+
+// NameLTE applies the LTE predicate on the "name" field.
+func NameLTE(v string) predicate.Permission {
+	return predicate.Permission(sql.FieldLTE(FieldName, v))
+}
+
+// NameContains applies the Contains predicate on the "name" field.
+func NameContains(v string) predicate.Permission {
+	return predicate.Permission(sql.FieldContains(FieldName, v))
+}
+
+// NameHasPrefix applies the HasPrefix predicate on the "name" field.
+func NameHasPrefix(v string) predicate.Permission {
+	return predicate.Permission(sql.FieldHasPrefix(FieldName, v))
+}
+
+// NameHasSuffix applies the HasSuffix predicate on the "name" field.
+func NameHasSuffix(v string) predicate.Permission {
+	return predicate.Permission(sql.FieldHasSuffix(FieldName, v))
+}
+
+// NameEqualFold applies the EqualFold predicate on the "name" field.
+func NameEqualFold(v string) predicate.Permission {
+	return predicate.Permission(sql.FieldEqualFold(FieldName, v))
+}
+
+// NameContainsFold applies the ContainsFold predicate on the "name" field.
+func NameContainsFold(v string) predicate.Permission {
+	return predicate.Permission(sql.FieldContainsFold(FieldName, v))
+}
+
+// ModuleEQ applies the EQ predicate on the "module" field.
+func ModuleEQ(v string) predicate.Permission {
+	return predicate.Permission(sql.FieldEQ(FieldModule, v))
+}
+
+// ModuleNEQ applies the NEQ predicate on the "module" field.
+func ModuleNEQ(v string) predicate.Permission {
+	return predicate.Permission(sql.FieldNEQ(FieldModule, v))
+}
+
+// ModuleIn applies the In predicate on the "module" field.
+func ModuleIn(vs ...string) predicate.Permission {
+	return predicate.Permission(sql.FieldIn(FieldModule, vs...))
+}
+
+// ModuleNotIn applies the NotIn predicate on the "module" field.
+func ModuleNotIn(vs ...string) predicate.Permission {
+	return predicate.Permission(sql.FieldNotIn(FieldModule, vs...))
+}
+
+// ModuleGT applies the GT predicate on the "module" field.
+func ModuleGT(v string) predicate.Permission {
+	return predicate.Permission(sql.FieldGT(FieldModule, v))
+}
+
+// ModuleGTE applies the GTE predicate on the "module" field.
+func ModuleGTE(v string) predicate.Permission {
+	return predicate.Permission(sql.FieldGTE(FieldModule, v))
+}
+
+// ModuleLT applies the LT predicate on the "module" field.
+func ModuleLT(v string) predicate.Permission {
+	return predicate.Permission(sql.FieldLT(FieldModule, v))
+}
+
+// ModuleLTE applies the LTE predicate on the "module" field.
+func ModuleLTE(v string) predicate.Permission {
+	return predicate.Permission(sql.FieldLTE(FieldModule, v))
+}
+
+// ModuleContains applies the Contains predicate on the "module" field.
+func ModuleContains(v string) predicate.Permission {
+	return predicate.Permission(sql.FieldContains(FieldModule, v))
+}
+
+// ModuleHasPrefix applies the HasPrefix predicate on the "module" field.
+func ModuleHasPrefix(v string) predicate.Permission {
+	return predicate.Permission(sql.FieldHasPrefix(FieldModule, v))
+}
+
+// ModuleHasSuffix applies the HasSuffix predicate on the "module" field.
+func ModuleHasSuffix(v string) predicate.Permission {
+	return predicate.Permission(sql.FieldHasSuffix(FieldModule, v))
+}
+
+// ModuleEqualFold applies the EqualFold predicate on the "module" field.
+func ModuleEqualFold(v string) predicate.Permission {
+	return predicate.Permission(sql.FieldEqualFold(FieldModule, v))
+}
+
+// ModuleContainsFold applies the ContainsFold predicate on the "module" field.
+func ModuleContainsFold(v string) predicate.Permission {
+	return predicate.Permission(sql.FieldContainsFold(FieldModule, v))
+}
+
+// DescriptionEQ applies the EQ predicate on the "description" field.
+func DescriptionEQ(v string) predicate.Permission {
+	return predicate.Permission(sql.FieldEQ(FieldDescription, v))
+}
+
+// DescriptionNEQ applies the NEQ predicate on the "description" field.
+func DescriptionNEQ(v string) predicate.Permission {
+	return predicate.Permission(sql.FieldNEQ(FieldDescription, v))
+}
+
+// DescriptionIn applies the In predicate on the "description" field.
+func DescriptionIn(vs ...string) predicate.Permission {
+	return predicate.Permission(sql.FieldIn(FieldDescription, vs...))
+}
+
+// DescriptionNotIn applies the NotIn predicate on the "description" field.
+func DescriptionNotIn(vs ...string) predicate.Permission {
+	return predicate.Permission(sql.FieldNotIn(FieldDescription, vs...))
+}
+
+// DescriptionGT applies the GT predicate on the "description" field.
+func DescriptionGT(v string) predicate.Permission {
+	return predicate.Permission(sql.FieldGT(FieldDescription, v))
+}
+
+// DescriptionGTE applies the GTE predicate on the "description" field.
+func DescriptionGTE(v string) predicate.Permission {
+	return predicate.Permission(sql.FieldGTE(FieldDescription, v))
+}
+
+// DescriptionLT applies the LT predicate on the "description" field.
+func DescriptionLT(v string) predicate.Permission {
+	return predicate.Permission(sql.FieldLT(FieldDescription, v))
+}
+
+// DescriptionLTE applies the LTE predicate on the "description" field.
+func DescriptionLTE(v string) predicate.Permission {
+	return predicate.Permission(sql.FieldLTE(FieldDescription, v))
+}
+
+// DescriptionContains applies the Contains predicate on the "description" field.
+func DescriptionContains(v string) predicate.Permission {
+	return predicate.Permission(sql.FieldContains(FieldDescription, v))
+}
+
+// DescriptionHasPrefix applies the HasPrefix predicate on the "description" field.
+func DescriptionHasPrefix(v string) predicate.Permission {
+	return predicate.Permission(sql.FieldHasPrefix(FieldDescription, v))
+}
+
+// DescriptionHasSuffix applies the HasSuffix predicate on the "description" field.
+func DescriptionHasSuffix(v string) predicate.Permission {
+	return predicate.Permission(sql.FieldHasSuffix(FieldDescription, v))
+}
+
+// DescriptionEqualFold applies the EqualFold predicate on the "description" field.
+func DescriptionEqualFold(v string) predicate.Permission {
+	return predicate.Permission(sql.FieldEqualFold(FieldDescription, v))
+}
+
+// DescriptionContainsFold applies the ContainsFold predicate on the "description" field.
+func DescriptionContainsFold(v string) predicate.Permission {
+	return predicate.Permission(sql.FieldContainsFold(FieldDescription, v))
+}
+
 // And groups predicates with the AND operator between them.
 func And(predicates ...predicate.Permission) predicate.Permission {
 	return predicate.Permission(sql.AndPredicates(predicates...))

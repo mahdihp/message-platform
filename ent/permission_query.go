@@ -258,6 +258,18 @@ func (_q *PermissionQuery) Clone() *PermissionQuery {
 
 // GroupBy is used to group vertices by one or more fields/columns.
 // It is often used with aggregate functions, like: count, max, mean, min, sum.
+//
+// Example:
+//
+//	var v []struct {
+//		Code string `json:"code,omitempty"`
+//		Count int `json:"count,omitempty"`
+//	}
+//
+//	client.Permission.Query().
+//		GroupBy(permission.FieldCode).
+//		Aggregate(ent.Count()).
+//		Scan(ctx, &v)
 func (_q *PermissionQuery) GroupBy(field string, fields ...string) *PermissionGroupBy {
 	_q.ctx.Fields = append([]string{field}, fields...)
 	grbuild := &PermissionGroupBy{build: _q}
@@ -269,6 +281,16 @@ func (_q *PermissionQuery) GroupBy(field string, fields ...string) *PermissionGr
 
 // Select allows the selection one or more fields/columns for the given query,
 // instead of selecting all fields in the entity.
+//
+// Example:
+//
+//	var v []struct {
+//		Code string `json:"code,omitempty"`
+//	}
+//
+//	client.Permission.Query().
+//		Select(permission.FieldCode).
+//		Scan(ctx, &v)
 func (_q *PermissionQuery) Select(fields ...string) *PermissionSelect {
 	_q.ctx.Fields = append(_q.ctx.Fields, fields...)
 	sbuild := &PermissionSelect{PermissionQuery: _q}

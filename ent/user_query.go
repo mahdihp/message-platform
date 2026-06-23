@@ -299,12 +299,12 @@ func (_q *UserQuery) WithTenant(opts ...func(*TenantQuery)) *UserQuery {
 // Example:
 //
 //	var v []struct {
-//		FirstName string `json:"first_name,omitempty"`
+//		CreatedAt time.Time `json:"created_at,omitempty"`
 //		Count int `json:"count,omitempty"`
 //	}
 //
 //	client.User.Query().
-//		GroupBy(user.FieldFirstName).
+//		GroupBy(user.FieldCreatedAt).
 //		Aggregate(ent.Count()).
 //		Scan(ctx, &v)
 func (_q *UserQuery) GroupBy(field string, fields ...string) *UserGroupBy {
@@ -322,11 +322,11 @@ func (_q *UserQuery) GroupBy(field string, fields ...string) *UserGroupBy {
 // Example:
 //
 //	var v []struct {
-//		FirstName string `json:"first_name,omitempty"`
+//		CreatedAt time.Time `json:"created_at,omitempty"`
 //	}
 //
 //	client.User.Query().
-//		Select(user.FieldFirstName).
+//		Select(user.FieldCreatedAt).
 //		Scan(ctx, &v)
 func (_q *UserQuery) Select(fields ...string) *UserSelect {
 	_q.ctx.Fields = append(_q.ctx.Fields, fields...)

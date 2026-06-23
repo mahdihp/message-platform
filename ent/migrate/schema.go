@@ -11,6 +11,10 @@ var (
 	// PermissionsColumns holds the columns for the "permissions" table.
 	PermissionsColumns = []*schema.Column{
 		{Name: "id", Type: field.TypeInt, Increment: true},
+		{Name: "code", Type: field.TypeString},
+		{Name: "name", Type: field.TypeString},
+		{Name: "module", Type: field.TypeString},
+		{Name: "description", Type: field.TypeString, Size: 100},
 	}
 	// PermissionsTable holds the schema information for the "permissions" table.
 	PermissionsTable = &schema.Table{
@@ -41,11 +45,11 @@ var (
 	// TenantsColumns holds the columns for the "tenants" table.
 	TenantsColumns = []*schema.Column{
 		{Name: "id", Type: field.TypeInt, Increment: true},
-		{Name: "name", Type: field.TypeString, Unique: true, Size: 50},
+		{Name: "name", Type: field.TypeString, Unique: true, Size: 50, SchemaType: map[string]string{"postgres": "varchar(50)"}},
 		{Name: "type", Type: field.TypeEnum, Enums: []string{"platform", "reseller", "customer"}, Default: "platform"},
 		{Name: "status", Type: field.TypeEnum, Enums: []string{"draft", "pending", "verified", "suspended"}, Default: "draft"},
-		{Name: "brand_name", Type: field.TypeString, Unique: true, Nullable: true, Size: 50},
-		{Name: "domain", Type: field.TypeString, Unique: true, Nullable: true, Size: 200},
+		{Name: "brand_name", Type: field.TypeString, Unique: true, Nullable: true, Size: 50, SchemaType: map[string]string{"postgres": "varchar(50)"}},
+		{Name: "domain", Type: field.TypeString, Unique: true, Nullable: true, Size: 200, SchemaType: map[string]string{"postgres": "varchar(200)"}},
 		{Name: "parent_id", Type: field.TypeInt, Nullable: true},
 	}
 	// TenantsTable holds the schema information for the "tenants" table.
@@ -65,10 +69,13 @@ var (
 	// UsersColumns holds the columns for the "users" table.
 	UsersColumns = []*schema.Column{
 		{Name: "id", Type: field.TypeInt64, Increment: true},
+		{Name: "created_at", Type: field.TypeTime},
+		{Name: "updated_at", Type: field.TypeTime},
+		{Name: "deleted_at", Type: field.TypeTime},
 		{Name: "first_name", Type: field.TypeString, Size: 50, SchemaType: map[string]string{"postgres": "varchar(50)"}},
-		{Name: "last_name", Type: field.TypeString, Size: 50},
-		{Name: "mobile", Type: field.TypeString, Size: 11},
-		{Name: "email", Type: field.TypeString, Size: 100},
+		{Name: "last_name", Type: field.TypeString, Size: 50, SchemaType: map[string]string{"postgres": "varchar(70)"}},
+		{Name: "mobile", Type: field.TypeString, Size: 11, SchemaType: map[string]string{"postgres": "char(11)"}},
+		{Name: "email", Type: field.TypeString, Size: 100, SchemaType: map[string]string{"postgres": "varchar(100)"}},
 		{Name: "password_hash", Type: field.TypeString},
 		{Name: "status", Type: field.TypeBool},
 		{Name: "tenant_users", Type: field.TypeInt},
@@ -81,7 +88,7 @@ var (
 		ForeignKeys: []*schema.ForeignKey{
 			{
 				Symbol:     "users_tenants_users",
-				Columns:    []*schema.Column{UsersColumns[7]},
+				Columns:    []*schema.Column{UsersColumns[10]},
 				RefColumns: []*schema.Column{TenantsColumns[0]},
 				OnDelete:   schema.NoAction,
 			},
